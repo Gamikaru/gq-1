@@ -1,0 +1,97 @@
+<!-- Path: /index.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>My Native App</title>
+  <link rel="stylesheet" href="global.css">
+  <script src="main.js" defer></script>
+
+</head>
+
+<body>
+  <!-- Status Bar -->
+  <div class="status-bar"></div>
+
+  <!-- Header -->
+  <header class="header">
+    <h1 class="header-title">Home</h1>
+    <button onclick="toggleLightMode()">Toggle Mode</button>
+  </header>
+
+  <!-- Main Content -->
+  <div class="main-container" id="mainContainer">
+    <!-- Dynamic content will be loaded here -->
+    <div id="content-container"></div>
+  </div>
+
+  <!-- Bottom Tab Bar -->
+  <nav class="tab-bar">
+    <div class="tab-item active" onclick="switchTab(0, 'Home', './html/home.html')">
+      <div class="tab-icon">🏠</div>
+      <div class="tab-label">Home</div>
+    </div>
+    <div class="tab-item" onclick="switchTab(1, 'Explore', './html/explore.html')">
+      <div class="tab-icon">🔍</div>
+      <div class="tab-label">Explore</div>
+    </div>
+    <div class="tab-item" onclick="switchTab(2, 'Create', './html/create.html')">
+      <div class="tab-icon">➕</div>
+      <div class="tab-label">Create</div>
+    </div>
+    <div class="tab-item" onclick="switchTab(3, 'Profile', './html/profile.html')">
+      <div class="tab-icon">👤</div>
+      <div class="tab-label">Profile</div>
+    </div>
+  </nav>
+
+  <!-- Floating Action Button -->
+  <div class="fab" onclick="openBottomSheet()">
+    <span class="fab-icon">+</span>
+  </div>
+
+  <!-- Modal/Bottom Sheet -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeBottomSheet()">
+    <div class="bottom-sheet" onclick="event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <div class="sheet-content">
+        <h2 style="margin-bottom: 20px;">Create New</h2>
+        <div class="list-container">
+          <div class="list-item" onclick="createAction('Post')">
+            <div class="list-item-content">
+              <div class="list-item-title">📝 New Post</div>
+            </div>
+          </div>
+          <div class="list-item" onclick="createAction('Photo')">
+            <div class="list-item-content">
+              <div class="list-item-title">📷 Upload Photo</div>
+            </div>
+          </div>
+          <div class="list-item" onclick="createAction('Video')">
+            <div class="list-item-content">
+              <div class="list-item-title">🎥 Share Video</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleLightMode() {
+      const body = document.body;
+      if (body.classList.contains('light-mode')) {
+        body.classList.remove('light-mode');
+      } else {
+        body.classList.add('light-mode');
+      }
+    }
+  </script>
+</body>
+
+</html>

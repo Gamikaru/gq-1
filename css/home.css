@@ -1,0 +1,45 @@
+ /* Path: /home.css */
+/* Home Tab Specific Styles */
+
+/* Hero Section */
+.hero {
+    text-align: center;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, rgba(0, 122, 255, 0.1), rgba(88, 86, 214, 0.1));
+    border-radius: 20px;
+    margin: 0 16px 24px;
+}
+
+.hero h1 {
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: -0.4px;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--primary), #5856D6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+    font-size: 17px;
+    color: var(--text-secondary);
+    letter-spacing: -0.4px;
+}
+
+/* Feature Cards Animation Delays */
+.home-feature-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.home-feature-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.home-feature-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+/* Quick Actions List Animation */
+.home-quick-actions {
+    animation-delay: 0.4s;
+}

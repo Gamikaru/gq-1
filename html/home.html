@@ -1,0 +1,88 @@
+<!-- Path: /pages/home.html -->
+<!-- Import CSS and JS specific to this page -->
+<link rel="stylesheet" href="../css/home.css">
+
+<div class="content">
+    <!-- Hero Section -->
+    <div class="hero">
+        <h1>Welcome</h1>
+        <p>Experience the future of mobile web</p>
+    </div>
+    
+    <!-- Feature Cards -->
+    <div class="section-header">FEATURES</div>
+    
+    <div class="native-card">
+        <div class="card-content">
+            <div class="card-header">
+                <div class="card-icon">📱</div>
+                <div>
+                    <div class="card-title">Native Experience</div>
+                </div>
+            </div>
+            <div class="card-subtitle">
+                Smooth animations and gestures that feel just like a native app
+            </div>
+        </div>
+    </div>
+    
+    <div class="native-card">
+        <div class="card-content">
+            <div class="card-header">
+                <div class="card-icon">⚡</div>
+                <div>
+                    <div class="card-title">Lightning Fast</div>
+                </div>
+            </div>
+            <div class="card-subtitle">
+                Optimized performance with hardware acceleration
+            </div>
+        </div>
+    </div>
+    
+    <div class="native-card">
+        <div class="card-content">
+            <div class="card-header">
+                <div class="card-icon">🎨</div>
+                <div>
+                    <div class="card-title">Beautiful Design</div>
+                </div>
+            </div>
+            <div class="card-subtitle">
+                Modern UI that adapts to your device
+            </div>
+        </div>
+    </div>
+    
+    <!-- List Section -->
+    <div class="section-header">QUICK ACTIONS</div>
+    
+    <div class="list-container">
+        <div class="list-item" onclick="goToProfile()">
+            <div class="list-item-content">
+                <div class="list-item-title">Profile</div>
+                <div class="list-item-subtitle">Manage your account</div>
+            </div>
+            <span class="chevron">›</span>
+        </div>
+        
+        <div class="list-item" onclick="showSettings()">
+            <div class="list-item-content">
+                <div class="list-item-title">Settings</div>
+                <div class="list-item-subtitle">App preferences</div>
+            </div>
+            <span class="chevron">›</span>
+        </div>
+        
+        <div class="list-item" onclick="showHelp()">
+            <div class="list-item-content">
+                <div class="list-item-title">Help & Support</div>
+                <div class="list-item-subtitle">Get assistance</div>
+            </div>
+            <span class="chevron">›</span>
+        </div>
+    </div>
+</div>
+
+<!-- Load JavaScript for this page -->
+<script src="../js/home.js"></script>

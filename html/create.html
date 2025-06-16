@@ -1,0 +1,64 @@
+<!-- Path: /pages/create.html -->
+<!-- Import CSS and JS specific to this page -->
+<link rel="stylesheet" href="../css/create.css">
+<!-- Load JavaScript for this page -->
+<script src="../js/create.js"></script>
+
+<div class="content">
+    <div class="section-header">CREATE SOMETHING NEW</div>
+    
+    <div class="native-card" onclick="createPost()">
+        <div class="card-content">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #667EEA, #764BA2);">📝</div>
+                <div>
+                    <div class="card-title">Write a Post</div>
+                </div>
+            </div>
+            <div class="card-subtitle">
+                Share your thoughts with the community
+            </div>
+        </div>
+    </div>
+    
+    <div class="native-card" onclick="uploadPhoto()">
+        <div class="card-content">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #F093FB, #F5576C);">📷</div>
+                <div>
+                    <div class="card-title">Upload Photo</div>
+                </div>
+            </div>
+            <div class="card-subtitle">
+                Share your moments in pictures
+            </div>
+        </div>
+    </div>
+    
+    <div class="native-card" onclick="shareVideo()">
+        <div class="card-content">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #FA709A, #FEE140);">🎥</div>
+                <div>
+                    <div class="card-title">Share Video</div>
+                </div>
+            </div>
+            <div class="card-subtitle">
+                Create engaging video content
+            </div>
+        </div>
+    </div>
+    
+    <div class="section-header">RECENT DRAFTS</div>
+    
+    <div class="list-container">
+        <div class="list-item" onclick="openDraft('Untitled Post')">
+            <div class="list-item-content">
+                <div class="list-item-title">Untitled Post</div>
+                <div class="list-item-subtitle">Last edited 2 hours ago</div>
+            </div>
+            <span class="chevron">›</span>
+        </div>
+    </div>
+</div>
+

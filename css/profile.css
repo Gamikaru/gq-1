@@ -1,0 +1,114 @@
+ /* Path: /profile.css */
+/* Profile Tab Specific Styles */
+
+/* Profile Header */
+.profile-header {
+    text-align: center;
+    padding: 30px 20px;
+    background: linear-gradient(135deg, rgba(0, 122, 255, 0.1), rgba(88, 86, 214, 0.1));
+    border-radius: 20px;
+    margin: 0 16px 24px;
+}
+
+/* Profile Avatar */
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--primary), #5856D6);
+    border-radius: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    margin: 0 auto 16px;
+    position: relative;
+}
+
+/* Edit Avatar Button (future feature) */
+.profile-avatar-edit {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 28px;
+    height: 28px;
+    background: var(--primary);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--background);
+    font-size: 14px;
+}
+
+/* Profile Name and Handle */
+.profile-name {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.profile-handle {
+    color: var(--text-secondary);
+    font-size: 16px;
+}
+
+/* Profile Stats */
+.profile-stats {
+    display: flex;
+    justify-content: space-around;
+    margin: 0 16px 24px;
+    padding: 20px;
+    background: var(--surface);
+    border-radius: 12px;
+}
+
+.stat {
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.stat:active {
+    transform: scale(0.95);
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+/* Sign Out Item Special Style */
+.profile-signout {
+    color: var(--primary);
+}
+
+.profile-signout .list-item-title {
+    color: var(--primary);
+}
+
+/* Profile Actions Hover Effects */
+.profile-actions .list-item {
+    position: relative;
+}
+
+.profile-actions .list-item::after {
+    content: '';
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 0;
+    height: 1px;
+    background: var(--border);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.profile-actions .list-item:hover::after {
+    transform: scaleX(1);
+}

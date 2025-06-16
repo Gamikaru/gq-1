@@ -1,0 +1,43 @@
+ /* Path: /explore.css */
+/* Explore Tab Specific Styles */
+
+/* Trending Card Icon */
+.explore-trending-icon {
+    background: linear-gradient(135deg, #FF6B6B, #FF8E53) !important;
+}
+
+/* Categories Card Icon */
+.explore-categories-icon {
+    background: linear-gradient(135deg, #4ECDC4, #44A08D) !important;
+}
+
+/* Popular Topics List */
+.explore-topics .list-item {
+    cursor: pointer;
+    position: relative;
+}
+
+.explore-topics .list-item:hover {
+    background-color: var(--surface-light);
+}
+
+/* Topic Icons in List */
+.explore-topics .list-item-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Topic Stats */
+.explore-topics .list-item-subtitle {
+    font-weight: 500;
+    color: var(--primary);
+}
+
+/* Search Suggestion (future feature) */
+.explore-search-hint {
+    text-align: center;
+    padding: 20px;
+    color: var(--text-secondary);
+    font-size: 14px;
+}

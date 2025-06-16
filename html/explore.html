@@ -1,0 +1,64 @@
+<!-- Path: /pages/explore.html -->
+<!-- Import CSS and JS specific to this page -->
+<link rel="stylesheet" href="../css/explore.css">
+
+<div class="content">
+    <div class="section-header">DISCOVER</div>
+    
+    <div class="native-card" onclick="showTrending()">
+        <div class="card-content">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #FF6B6B, #FF8E53);">🔥</div>
+                <div>
+                    <div class="card-title">Trending Now</div>
+                </div>
+            </div>
+            <div class="card-subtitle">
+                Discover what's popular in your area
+            </div>
+        </div>
+    </div>
+    
+    <div class="native-card" onclick="showCategories()">
+        <div class="card-content">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #4ECDC4, #44A08D);">🌍</div>
+                <div>
+                    <div class="card-title">Explore Categories</div>
+                </div>
+            </div>
+            <div class="card-subtitle">
+                Browse by your interests
+            </div>
+        </div>
+    </div>
+    
+    <div class="section-header">POPULAR TOPICS</div>
+    
+    <div class="list-container">
+        <div class="list-item" onclick="exploreTopic('Art & Design')">
+            <div class="list-item-content">
+                <div class="list-item-title">🎨 Art & Design</div>
+                <div class="list-item-subtitle">2.3k posts today</div>
+            </div>
+            <span class="chevron">›</span>
+        </div>
+        <div class="list-item" onclick="exploreTopic('Technology')">
+            <div class="list-item-content">
+                <div class="list-item-title">💻 Technology</div>
+                <div class="list-item-subtitle">5.1k posts today</div>
+            </div>
+            <span class="chevron">›</span>
+        </div>
+        <div class="list-item" onclick="exploreTopic('Fitness')">
+            <div class="list-item-content">
+                <div class="list-item-title">🏃 Fitness</div>
+                <div class="list-item-subtitle">1.8k posts today</div>
+            </div>
+            <span class="chevron">›</span>
+        </div>
+    </div>
+</div>
+
+<!-- Load JavaScript for this page -->
+<script src="../js/explore.js"></script>

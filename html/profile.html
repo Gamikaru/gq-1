@@ -1,0 +1,76 @@
+<!-- Path: /pages/profile.html -->
+<!-- Import CSS and JS specific to this page -->
+<link rel="stylesheet" href="../css/profile.css">
+
+<div class="content">
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div class="profile-avatar" onclick="changeAvatar()">👤</div>
+        <h2 class="profile-name">John Doe</h2>
+        <p class="profile-handle">@johndoe</p>
+    </div>
+
+    <div class="profile-stats">
+        <div class="stat" onclick="showPosts()">
+            <div class="stat-value">128</div>
+            <div class="stat-label">Posts</div>
+        </div>
+        <div class="stat" onclick="showFollowers()">
+            <div class="stat-value">1.2k</div>
+            <div class="stat-label">Followers</div>
+        </div>
+        <div class="stat" onclick="showFollowing()">
+            <div class="stat-value">847</div>
+            <div class="stat-label">Following</div>
+        </div>
+    </div>
+
+    <div class="section-header">ACCOUNT</div>
+
+    <div class="list-container">
+        <div class="list-item" onclick="editProfile()">
+            <div class="list-item-content">
+                <div class="list-item-title">Edit Profile</div>
+            </div>
+            <span class="chevron">›</span>
+        </div>
+        <div class="list-item" onclick="showPrivacySettings()">
+            <div class="list-item-content">
+                <div class="list-item-title">Privacy Settings</div>
+            </div>
+            <span class="chevron">›</span>
+        </div>
+        <div class="list-item" onclick="showNotifications()">
+            <div class="list-item-content">
+                <div class="list-item-title">Notifications</div>
+            </div>
+            <span class="chevron">›</span>
+        </div>
+    </div>
+
+    <div class="section-header">SUPPORT</div>
+
+    <div class="list-container">
+        <div class="list-item" onclick="showHelpCenter()">
+            <div class="list-item-content">
+                <div class="list-item-title">Help Center</div>
+            </div>
+            <span class="chevron">›</span>
+        </div>
+        <div class="list-item" onclick="showTerms()">
+            <div class="list-item-content">
+                <div class="list-item-title">Terms of Service</div>
+            </div>
+            <span class="chevron">›</span>
+        </div>
+        <div class="list-item" onclick="signOut()">
+            <div class="list-item-content">
+                <div class="list-item-title">Sign Out</div>
+            </div>
+            <span class="chevron">›</span>
+        </div>
+    </div>
+</div>
+
+<!-- Load JavaScript for this page -->
+<script src="../js/profile.js"></script>
