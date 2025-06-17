@@ -1,27 +1,61 @@
-<!-- Path: /pages/explore.html -->
-<!-- Import CSS and JS specific to this page -->
+<!-- Path: /html/explore.html -->
+<!-- 
+  🔍 EXPLORE PAGE TEMPLATE
+  
+  This page helps users discover content or features in your app
+  Think of it as a "browse" or "discover" section
+  
+  FRONT-END DEVELOPER: You'll need to:
+  1. Decide what users can explore in YOUR app
+  2. Update the discovery cards with relevant options
+  3. Change the popular topics to match your case study
+  
+  Examples for different apps:
+  - Dental app: "Find Dentists", "Treatment Options", "Insurance Plans"
+  - Police app: "Crime Map", "Safety Tips", "Community Programs"
+  - Energy app: "Energy Tips", "Usage Insights", "Green Programs"
+-->
+
+<!-- Link to page-specific styling -->
 <link rel="stylesheet" href="../css/explore.css">
 
 <div class="content">
+    <!-- Section title - keep these in ALL CAPS for consistency -->
     <div class="section-header">DISCOVER</div>
     
+    <!-- 
+      🔥 DISCOVERY CARDS
+      These are the main ways users can explore your app
+      Each card should lead to a different type of content
+      
+      💡 CHANGE THESE based on your app:
+      - Update icons, titles, and descriptions
+      - Make sure the onclick functions match what you want to happen
+    -->
+    
+    <!-- Discovery Card 1: Trending/Popular -->
     <div class="native-card" onclick="showTrending()">
         <div class="card-content">
             <div class="card-header">
+                <!-- The gradient background is set inline here - you can change the colors! -->
                 <div class="card-icon" style="background: linear-gradient(135deg, #FF6B6B, #FF8E53);">🔥</div>
                 <div>
+                    <!-- 💡 Change this title to match your app -->
                     <div class="card-title">Trending Now</div>
                 </div>
             </div>
+            <!-- 💡 Update this description -->
             <div class="card-subtitle">
                 Discover what's popular in your area
             </div>
         </div>
     </div>
     
+    <!-- Discovery Card 2: Categories/Browse -->
     <div class="native-card" onclick="showCategories()">
         <div class="card-content">
             <div class="card-header">
+                <!-- Different gradient colors for visual variety -->
                 <div class="card-icon" style="background: linear-gradient(135deg, #4ECDC4, #44A08D);">🌍</div>
                 <div>
                     <div class="card-title">Explore Categories</div>
@@ -33,16 +67,31 @@
         </div>
     </div>
     
+    <!-- 
+      📊 POPULAR TOPICS/ITEMS SECTION
+      This shows a list of popular or featured items
+      Each item is clickable and shows some stats
+      
+      💡 CUSTOMIZE FOR YOUR APP:
+      - Dental app: Popular treatments, common questions, etc.
+      - Police app: Neighborhood watch areas, safety topics, etc.
+      - Energy app: Popular devices, saving tips, etc.
+    -->
     <div class="section-header">POPULAR TOPICS</div>
     
     <div class="list-container">
+        <!-- Topic 1 -->
         <div class="list-item" onclick="exploreTopic('Art & Design')">
             <div class="list-item-content">
+                <!-- 💡 Change the emoji and topic name -->
                 <div class="list-item-title">🎨 Art & Design</div>
+                <!-- 💡 Update the stats or description -->
                 <div class="list-item-subtitle">2.3k posts today</div>
             </div>
             <span class="chevron">›</span>
         </div>
+        
+        <!-- Topic 2 -->
         <div class="list-item" onclick="exploreTopic('Technology')">
             <div class="list-item-content">
                 <div class="list-item-title">💻 Technology</div>
@@ -50,6 +99,8 @@
             </div>
             <span class="chevron">›</span>
         </div>
+        
+        <!-- Topic 3 -->
         <div class="list-item" onclick="exploreTopic('Fitness')">
             <div class="list-item-content">
                 <div class="list-item-title">🏃 Fitness</div>
@@ -57,8 +108,10 @@
             </div>
             <span class="chevron">›</span>
         </div>
+        
+        <!-- 💡 Add more topics as needed for your app -->
     </div>
 </div>
 
-<!-- Load JavaScript for this page -->
+<!-- Load the JavaScript for this page -->
 <script src="../js/explore.js"></script>

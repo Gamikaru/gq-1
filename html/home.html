@@ -1,31 +1,68 @@
-<!-- Path: /pages/home.html -->
-<!-- Import CSS and JS specific to this page -->
+<!-- Path: /html/home.html -->
+<!-- 
+  🏠 HOME PAGE TEMPLATE
+  
+  This is what users see when they first open your app!
+  Think of this as your app's "welcome mat" - it should:
+  - Introduce what your app does
+  - Show the most important features
+  - Guide users to take action
+  
+  FRONT-END DEVELOPER: You'll need to:
+  1. Replace all the placeholder text with content for your case study
+  2. Update the hero section to introduce YOUR app
+  3. Change the feature cards to highlight YOUR app's benefits
+  4. Update the quick actions to match YOUR app's functions
+-->
+
+<!-- These link to the CSS and JavaScript files specific to this page -->
 <link rel="stylesheet" href="../css/home.css">
 
 <div class="content">
-    <!-- Hero Section -->
+    <!-- 
+      🌟 HERO SECTION
+      This is the first thing users see - make it count!
+      It should quickly explain what your app is about
+      
+      💡 CHANGE THIS: Update the welcome message and tagline
+    -->
     <div class="hero">
         <h1>Welcome</h1>
         <p>Experience the future of mobile web</p>
     </div>
     
-    <!-- Feature Cards -->
+    <!-- 
+      📋 FEATURE CARDS SECTION
+      These cards highlight your app's main features or benefits
+      Users can tap them to learn more
+      
+      FRONT-END DEVELOPER: 
+      - Change the icons (currently using emojis)
+      - Update titles to match your app's features
+      - Write descriptions that explain the benefits
+      - Add or remove cards as needed
+    -->
     <div class="section-header">FEATURES</div>
     
+    <!-- Feature Card 1 -->
     <div class="native-card">
         <div class="card-content">
             <div class="card-header">
+                <!-- 💡 Change this emoji to match your feature -->
                 <div class="card-icon">📱</div>
                 <div>
+                    <!-- 💡 Update this title -->
                     <div class="card-title">Native Experience</div>
                 </div>
             </div>
+            <!-- 💡 Write a description of this feature -->
             <div class="card-subtitle">
                 Smooth animations and gestures that feel just like a native app
             </div>
         </div>
     </div>
     
+    <!-- Feature Card 2 -->
     <div class="native-card">
         <div class="card-content">
             <div class="card-header">
@@ -40,6 +77,7 @@
         </div>
     </div>
     
+    <!-- Feature Card 3 -->
     <div class="native-card">
         <div class="card-content">
             <div class="card-header">
@@ -54,18 +92,30 @@
         </div>
     </div>
     
-    <!-- List Section -->
+    <!-- 
+      🚀 QUICK ACTIONS SECTION
+      These are buttons that take users to important parts of your app
+      Each one has an onclick function that does something when tapped
+      
+      💡 Update these to match the main actions in YOUR app
+      For example:
+      - For a dental app: "Book Appointment", "View History", "Contact Us"
+      - For a police app: "Report Issue", "View Alerts", "Emergency Contacts"
+    -->
     <div class="section-header">QUICK ACTIONS</div>
     
     <div class="list-container">
+        <!-- Action 1: Goes to Profile -->
         <div class="list-item" onclick="goToProfile()">
             <div class="list-item-content">
                 <div class="list-item-title">Profile</div>
                 <div class="list-item-subtitle">Manage your account</div>
             </div>
+            <!-- This arrow indicates you can tap to go somewhere -->
             <span class="chevron">›</span>
         </div>
         
+        <!-- Action 2: Shows Settings -->
         <div class="list-item" onclick="showSettings()">
             <div class="list-item-content">
                 <div class="list-item-title">Settings</div>
@@ -74,6 +124,7 @@
             <span class="chevron">›</span>
         </div>
         
+        <!-- Action 3: Shows Help -->
         <div class="list-item" onclick="showHelp()">
             <div class="list-item-content">
                 <div class="list-item-title">Help & Support</div>
@@ -84,5 +135,5 @@
     </div>
 </div>
 
-<!-- Load JavaScript for this page -->
+<!-- This loads the JavaScript that makes this page interactive -->
 <script src="../js/home.js"></script>

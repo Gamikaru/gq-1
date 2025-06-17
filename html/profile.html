@@ -1,15 +1,54 @@
-<!-- Path: /pages/profile.html -->
-<!-- Import CSS and JS specific to this page -->
+<!-- Path: /html/profile.html -->
+<!-- 
+  👤 PROFILE PAGE TEMPLATE
+  
+  This page shows user account information and settings
+  It's like the "control center" for the user's account
+  
+  FRONT-END DEVELOPER: You'll need to:
+  1. Decide what profile info is relevant for YOUR app
+  2. Update the stats to match your app's data
+  3. Customize the account options and support links
+  
+  Examples for different apps:
+  - Dental app: Show appointments, insurance info, treatment history
+  - Police app: Show reports filed, community involvement, contact info
+  - Energy app: Show account number, usage stats, billing info
+  - School app: Show grades, assignments, parent contact info
+-->
+
+<!-- Import page-specific styling -->
 <link rel="stylesheet" href="../css/profile.css">
 
 <div class="content">
-    <!-- Profile Header -->
+    <!-- 
+      👤 PROFILE HEADER
+      This shows the user's basic info with a nice gradient background
+      
+      💡 CUSTOMIZE based on your app:
+      - Change what info is displayed
+      - Update the avatar/profile picture approach
+      - Modify the visual style to match your brand
+    -->
     <div class="profile-header">
+        <!-- Profile picture - currently just an emoji -->
         <div class="profile-avatar" onclick="changeAvatar()">👤</div>
+        
+        <!-- 💡 Update these to show relevant user info -->
         <h2 class="profile-name">John Doe</h2>
         <p class="profile-handle">@johndoe</p>
     </div>
 
+    <!-- 
+      📊 PROFILE STATS
+      Shows important numbers related to the user
+      
+      💡 REPLACE THESE with stats that matter for YOUR app:
+      - Dental: "Appointments", "Documents", "Family Members"
+      - Police: "Reports Filed", "Tips Submitted", "Alerts Active"
+      - Energy: "kWh Used", "Bill Amount", "Green Score"
+      - School: "Assignments", "GPA", "Attendance"
+    -->
     <div class="profile-stats">
         <div class="stat" onclick="showPosts()">
             <div class="stat-value">128</div>
@@ -25,44 +64,68 @@
         </div>
     </div>
 
+    <!-- 
+      ⚙️ ACCOUNT SETTINGS SECTION
+      These are actions related to the user's account
+      
+      💡 UPDATE THESE based on what users need to manage
+    -->
     <div class="section-header">ACCOUNT</div>
 
     <div class="list-container">
+        <!-- Edit Profile option -->
         <div class="list-item" onclick="editProfile()">
             <div class="list-item-content">
                 <div class="list-item-title">Edit Profile</div>
             </div>
             <span class="chevron">›</span>
         </div>
+        
+        <!-- Privacy Settings -->
         <div class="list-item" onclick="showPrivacySettings()">
             <div class="list-item-content">
                 <div class="list-item-title">Privacy Settings</div>
             </div>
             <span class="chevron">›</span>
         </div>
+        
+        <!-- Notifications -->
         <div class="list-item" onclick="showNotifications()">
             <div class="list-item-content">
                 <div class="list-item-title">Notifications</div>
             </div>
             <span class="chevron">›</span>
         </div>
+        
+        <!-- 💡 Add more account options as needed -->
     </div>
 
+    <!-- 
+      🆘 SUPPORT SECTION
+      Help and information links
+      
+      💡 CUSTOMIZE with relevant support options for YOUR app
+    -->
     <div class="section-header">SUPPORT</div>
 
     <div class="list-container">
+        <!-- Help Center -->
         <div class="list-item" onclick="showHelpCenter()">
             <div class="list-item-content">
                 <div class="list-item-title">Help Center</div>
             </div>
             <span class="chevron">›</span>
         </div>
+        
+        <!-- Terms of Service -->
         <div class="list-item" onclick="showTerms()">
             <div class="list-item-content">
                 <div class="list-item-title">Terms of Service</div>
             </div>
             <span class="chevron">›</span>
         </div>
+        
+        <!-- Sign Out - This is usually at the bottom -->
         <div class="list-item" onclick="signOut()">
             <div class="list-item-content">
                 <div class="list-item-title">Sign Out</div>
@@ -72,5 +135,5 @@
     </div>
 </div>
 
-<!-- Load JavaScript for this page -->
+<!-- Load JavaScript for profile functionality -->
 <script src="../js/profile.js"></script>

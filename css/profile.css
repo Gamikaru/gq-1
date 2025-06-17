@@ -1,114 +1,204 @@
- /* Path: /profile.css */
-/* Profile Tab Specific Styles */
+/* Path: /css/profile.css */
+/* 
+  👤 PROFILE PAGE STYLES
+  
+  This file styles the user profile/account page
+  It creates a personal space for user information and settings
+  
+  UX/UI DESIGNER: Use this file to:
+  1. Style the profile header with user info
+  2. Design the stats display to show important data
+  3. Customize the settings and action lists
+  4. Make the sign-out option stand out
+*/
 
-/* Profile Header */
+/* 
+  🎨 PROFILE HEADER
+  The top section with user avatar and basic info
+  Uses a gradient background for visual interest
+  
+  💡 This gradient matches the hero section on the home page
+  Keep consistent gradients across your app!
+*/
 .profile-header {
-    text-align: center;
-    padding: 30px 20px;
+    text-align: center;       /* Centers all content */
+    padding: 30px 20px;       /* Generous padding for breathing room */
+    /* Gradient from light blue to surface color */
     background: linear-gradient(135deg, rgba(0, 122, 255, 0.1), rgba(88, 86, 214, 0.1));
-    border-radius: 20px;
-    margin: 0 16px 24px;
+    border-radius: 20px;      /* Rounded corners for modern look */
+    margin: 0 16px 24px;      /* Space around the header */
 }
 
-/* Profile Avatar */
+/* 
+  👤 PROFILE AVATAR
+  The circular user picture/icon
+  Currently shows an emoji but could be an image
+  
+  💡 TO ADD REAL PHOTOS:
+  Replace the emoji in the HTML with:
+  <img src="user-photo.jpg" alt="Profile">
+  Then add: .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+*/
 .profile-avatar {
     width: 80px;
     height: 80px;
     background: linear-gradient(135deg, var(--primary), #5856D6);
-    border-radius: 40px;
+    border-radius: 40px;      /* Makes it circular (half of width) */
     display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 40px;
-    margin: 0 auto 16px;
-    position: relative;
+    align-items: center;      /* Centers content vertically */
+    justify-content: center;  /* Centers content horizontally */
+    font-size: 40px;         /* Large emoji/icon */
+    margin: 0 auto 16px;     /* Centers it with margin auto */
+    position: relative;      /* For edit button positioning */
 }
 
-/* Edit Avatar Button (future feature) */
+/* 
+  ✏️ EDIT AVATAR BUTTON (for future feature)
+  A small button overlay for changing the profile picture
+  Currently hidden but ready to use
+*/
 .profile-avatar-edit {
-    position: absolute;
-    bottom: 0;
-    right: 0;
+    position: absolute;       /* Positions relative to avatar */
+    bottom: 0;               /* At the bottom */
+    right: 0;                /* At the right */
     width: 28px;
     height: 28px;
     background: var(--primary);
-    border-radius: 14px;
+    border-radius: 14px;     /* Circular button */
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid var(--background);
+    border: 2px solid var(--background);  /* White border for contrast */
     font-size: 14px;
 }
 
-/* Profile Name and Handle */
+/* 
+  📝 PROFILE NAME AND DETAILS
+  The user's display name and username/handle
+*/
 .profile-name {
     font-size: 24px;
-    font-weight: 600;
+    font-weight: 600;        /* Semi-bold for emphasis */
     margin-bottom: 4px;
 }
 
 .profile-handle {
-    color: var(--text-secondary);
+    color: var(--text-secondary);  /* Lighter color for less emphasis */
     font-size: 16px;
 }
 
-/* Profile Stats */
+/* 
+  📊 PROFILE STATISTICS
+  Shows important numbers about the user
+  Displayed in a horizontal row
+  
+  💡 CUSTOMIZE FOR YOUR APP:
+  - Dental: Appointments, Documents, Family Members
+  - Police: Reports Filed, Response Time, Area Coverage  
+  - Energy: kWh Used, Carbon Saved, Bills Paid
+*/
 .profile-stats {
-    display: flex;
-    justify-content: space-around;
+    display: flex;           /* Horizontal layout */
+    justify-content: space-around;  /* Equal spacing */
     margin: 0 16px 24px;
     padding: 20px;
     background: var(--surface);
     border-radius: 12px;
 }
 
+/* Individual stat container */
 .stat {
     text-align: center;
-    cursor: pointer;
-    transition: transform 0.2s ease;
+    cursor: pointer;         /* Shows it's clickable */
+    transition: transform 0.2s ease;  /* Smooth animation */
 }
 
+/* Pressed/clicked effect */
 .stat:active {
-    transform: scale(0.95);
+    transform: scale(0.95);  /* Slightly smaller when pressed */
 }
 
+/* The big number */
 .stat-value {
     font-size: 20px;
     font-weight: 600;
     margin-bottom: 4px;
 }
 
+/* The label under the number */
 .stat-label {
     font-size: 13px;
     color: var(--text-secondary);
 }
 
-/* Sign Out Item Special Style */
+/* 
+  🚪 SIGN OUT SPECIAL STYLING
+  Makes the sign-out option stand out with color
+  Important actions should be visually different
+*/
 .profile-signout {
-    color: var(--primary);
+    color: var(--primary);   /* Uses main brand color */
 }
 
 .profile-signout .list-item-title {
-    color: var(--primary);
+    color: var(--primary);   /* Makes the text colored too */
 }
 
-/* Profile Actions Hover Effects */
+/* 
+  ✨ PROFILE ACTION HOVER EFFECTS
+  Adds a subtle line animation when hovering
+  Makes the interface feel more responsive
+*/
 .profile-actions .list-item {
-    position: relative;
+    position: relative;      /* Needed for the line effect */
 }
 
+/* The animated underline - starts hidden */
 .profile-actions .list-item::after {
-    content: '';
+    content: '';            /* Empty element for the line */
     position: absolute;
     left: 16px;
     right: 16px;
     bottom: 0;
     height: 1px;
     background: var(--border);
-    transform: scaleX(0);
+    transform: scaleX(0);   /* Starts with 0 width */
     transition: transform 0.3s ease;
 }
 
+/* Show the line on hover */
 .profile-actions .list-item:hover::after {
-    transform: scaleX(1);
+    transform: scaleX(1);   /* Expands to full width */
 }
+
+/* 
+  💡 CUSTOMIZATION IDEAS:
+  
+  1. Add verified badge to profile:
+     .verified-badge {
+         background: var(--primary);
+         color: white;
+         padding: 4px 8px;
+         border-radius: 12px;
+         font-size: 12px;
+     }
+  
+  2. Create profile completion indicator:
+     .profile-completion {
+         width: 100%;
+         height: 4px;
+         background: var(--surface-light);
+         border-radius: 2px;
+         overflow: hidden;
+     }
+     .completion-fill {
+         height: 100%;
+         background: var(--primary);
+         width: 75%;  /* Completion percentage 
+     }
+  
+  3. Style for different user types:
+     .profile-header.premium {
+         background: linear-gradient(135deg, gold, orange);
+     }
+*/

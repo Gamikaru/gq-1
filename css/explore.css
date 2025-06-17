@@ -1,43 +1,118 @@
- /* Path: /explore.css */
-/* Explore Tab Specific Styles */
+/* Path: /css/explore.css */
+/* 
+  🔍 EXPLORE PAGE STYLES
+  
+  This file styles the Explore/Discovery page of your app
+  It makes browsing and finding content visually appealing
+  
+  UX/UI DESIGNER: Use this file to:
+  1. Style the discovery cards with eye-catching gradients
+  2. Make the popular topics list easy to scan
+  3. Add visual feedback for interactive elements
+  4. Create a browsing experience that fits your app
+*/
 
-/* Trending Card Icon */
+/* 
+  🔥 TRENDING CARD ICON
+  Hot red/orange gradient for trending content
+  This catches the user's eye for popular items
+  
+  💡 The gradient direction (135deg) goes from top-left to bottom-right
+  You can change this angle for different effects
+*/
 .explore-trending-icon {
     background: linear-gradient(135deg, #FF6B6B, #FF8E53) !important;
 }
 
-/* Categories Card Icon */
+/* 
+  🌍 CATEGORIES CARD ICON  
+  Cool teal/green gradient for browsing categories
+  Gives a calm, organized feeling
+*/
 .explore-categories-icon {
     background: linear-gradient(135deg, #4ECDC4, #44A08D) !important;
 }
 
-/* Popular Topics List */
+/* 
+  📊 POPULAR TOPICS LIST
+  Styles for the list of trending or popular items
+  Makes each topic clickable and interactive
+*/
 .explore-topics .list-item {
-    cursor: pointer;
-    position: relative;
+    cursor: pointer;          /* Shows it's clickable */
+    position: relative;       /* For potential badges/indicators */
 }
 
+/* Highlight effect when hovering over topics */
 .explore-topics .list-item:hover {
-    background-color: var(--surface-light);
+    background-color: var(--surface-light);  /* Slightly lighter background */
 }
 
-/* Topic Icons in List */
+/* 
+  🏷️ TOPIC ICONS IN LIST
+  Allows icons to appear next to topic names
+  The gap property adds space between icon and text
+*/
 .explore-topics .list-item-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    display: flex;            /* Puts icon and text side by side */
+    align-items: center;      /* Vertically centers them */
+    gap: 8px;                /* Space between icon and text */
 }
 
-/* Topic Stats */
+/* 
+  📈 TOPIC STATISTICS
+  Shows numbers like post count or activity level
+  Uses primary color to make stats stand out
+*/
 .explore-topics .list-item-subtitle {
-    font-weight: 500;
-    color: var(--primary);
+    font-weight: 500;         /* Medium weight for emphasis */
+    color: var(--primary);    /* Your main brand color */
 }
 
-/* Search Suggestion (future feature) */
+/* 
+  🔍 SEARCH SUGGESTION (for future feature)
+  A hint that appears above the explore content
+  Encourages users to search for specific items
+  
+  💡 You might not need this - remove if not using search
+*/
 .explore-search-hint {
     text-align: center;
     padding: 20px;
     color: var(--text-secondary);
     font-size: 14px;
 }
+
+/* 
+  💡 CUSTOMIZATION IDEAS FOR YOUR APP:
+  
+  1. Add category badges with colors:
+     .category-badge {
+         background: #FF6B6B;
+         color: white;
+         padding: 4px 12px;
+         border-radius: 16px;
+         font-size: 12px;
+     }
+  
+  2. Create a grid layout for categories:
+     .explore-grid {
+         display: grid;
+         grid-template-columns: repeat(2, 1fr);
+         gap: 16px;
+     }
+  
+  3. Add activity indicators:
+     .activity-dot {
+         width: 8px;
+         height: 8px;
+         background: #4CAF50;
+         border-radius: 50%;
+         display: inline-block;
+     }
+  
+  4. Style for different topic types:
+     .topic-urgent { border-left: 3px solid red; }
+     .topic-new { border-left: 3px solid green; }
+     .topic-popular { border-left: 3px solid gold; }
+*/

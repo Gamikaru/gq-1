@@ -1,30 +1,62 @@
-<!-- Path: /pages/create.html -->
-<!-- Import CSS and JS specific to this page -->
+<!-- Path: /html/create.html -->
+<!-- 
+  ➕ CREATE PAGE TEMPLATE
+  
+  This page is for creating new content in your app
+  Think about what users will "create" or "submit" in YOUR app
+  
+  FRONT-END DEVELOPER: You'll need to:
+  1. Decide what can be created in your app
+  2. Update the creation options to match your case study
+  3. Change icons and descriptions appropriately
+  
+  Examples for different apps:
+  - Dental app: "Book Appointment", "Submit Question", "Request Records"
+  - Police app: "File Report", "Submit Tip", "Request Officer"
+  - Energy app: "Report Outage", "Submit Reading", "Request Service"
+  - School app: "Submit Homework", "Ask Teacher", "Request Help"
+-->
+
+<!-- Import page-specific CSS styling -->
 <link rel="stylesheet" href="../css/create.css">
-<!-- Load JavaScript for this page -->
-<script src="../js/create.js"></script>
 
 <div class="content">
+    <!-- Section header - describes what users can do here -->
     <div class="section-header">CREATE SOMETHING NEW</div>
     
+    <!-- 
+      📝 CREATION OPTIONS
+      These cards show different things users can create
+      Each card triggers a different action when clicked
+      
+      💡 CUSTOMIZE THESE for your app's needs
+      Think about the main actions users need to take
+    -->
+    
+    <!-- Creation Option 1: Text-based content -->
     <div class="native-card" onclick="createPost()">
         <div class="card-content">
             <div class="card-header">
-                <div class="card-icon" style="background: linear-gradient(135deg, #667EEA, #764BA2);">📝</div>
+                <!-- Gradient background makes the icon stand out -->
+                <div class="card-icon create-post-icon">📝</div>
                 <div>
+                    <!-- 💡 Change this title to match what users create -->
                     <div class="card-title">Write a Post</div>
                 </div>
             </div>
+            <!-- 💡 Update this description -->
             <div class="card-subtitle">
                 Share your thoughts with the community
             </div>
         </div>
     </div>
     
+    <!-- Creation Option 2: Photo/Image content -->
     <div class="native-card" onclick="uploadPhoto()">
         <div class="card-content">
             <div class="card-header">
-                <div class="card-icon" style="background: linear-gradient(135deg, #F093FB, #F5576C);">📷</div>
+                <!-- Different gradient color for variety -->
+                <div class="card-icon create-photo-icon">📷</div>
                 <div>
                     <div class="card-title">Upload Photo</div>
                 </div>
@@ -35,10 +67,12 @@
         </div>
     </div>
     
+    <!-- Creation Option 3: Video content -->
     <div class="native-card" onclick="shareVideo()">
         <div class="card-content">
             <div class="card-header">
-                <div class="card-icon" style="background: linear-gradient(135deg, #FA709A, #FEE140);">🎥</div>
+                <!-- Another gradient variation -->
+                <div class="card-icon create-video-icon">🎥</div>
                 <div>
                     <div class="card-title">Share Video</div>
                 </div>
@@ -49,16 +83,32 @@
         </div>
     </div>
     
+    <!-- 
+      📂 DRAFTS/SAVED ITEMS SECTION
+      Shows previously saved but unfinished items
+      
+      💡 ADAPT THIS for your app:
+      - Dental: "Unfinished Appointments", "Saved Forms"
+      - Police: "Draft Reports", "Saved Information"
+      - Energy: "Pending Requests", "Saved Readings"
+      - School: "Draft Assignments", "Saved Work"
+    -->
     <div class="section-header">RECENT DRAFTS</div>
     
     <div class="list-container">
+        <!-- Example draft item -->
         <div class="list-item" onclick="openDraft('Untitled Post')">
             <div class="list-item-content">
+                <!-- 💡 Update the draft name and details -->
                 <div class="list-item-title">Untitled Post</div>
                 <div class="list-item-subtitle">Last edited 2 hours ago</div>
             </div>
             <span class="chevron">›</span>
         </div>
+        
+        <!-- 💡 Add more draft items or remove this section if not needed -->
     </div>
 </div>
 
+<!-- Load JavaScript for this page's functionality -->
+<script src="../js/create.js"></script>

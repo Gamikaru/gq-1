@@ -1,21 +1,54 @@
-/* Path: /styles.css */
-/* Global Base Styles and Shared Components */
+/* Path: /css/global.css */
+/* 
+  🎨 GLOBAL STYLES - The foundation of your app's look!
+  
+  This file contains all the shared styles that every page uses.
+  Think of it as your app's "design system" - it keeps everything looking consistent.
+  
+  UX/UI DESIGNER: This is your main file! You'll need to:
+  1. Update the color scheme to match your brand
+  2. Adjust spacing and sizes for your content
+  3. Modify animations and transitions
+  4. Ensure everything looks good on different screen sizes
+  
+  The file is organized into sections - read the comments to understand each part!
+*/
 
-/* CSS Variables */
+/* 
+  🎨 CSS VARIABLES (Custom Properties)
+  These are like "settings" for your design - change them once, update everywhere!
+  
+  HOW TO USE: Change the values after the colons
+  EXAMPLE: --primary: #007AFF; changes the main color to blue
+*/
 :root {
+    /* Safe areas for phones with notches (like iPhone) */
     --safe-area-inset-top: env(safe-area-inset-top, 20px);
     --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
-    --primary: #007AFF;
-    --background: #000000;
-    --surface: #1C1C1E;
-    --surface-light: #2C2C2E;
-    --text-primary: #FFFFFF;
-    --text-secondary: #8E8E93;
-    --border: rgba(255, 255, 255, 0.1);
-    --tab-height: 50px;
-    --header-height: 44px;
+    
+    /* 
+      🎨 MAIN COLORS - Update these to match your brand!
+      TIP: Use a color picker tool to find hex codes
+    */
+    --primary: #007AFF;           /* Main brand color (currently blue) */
+    --background: #000000;        /* Page background (currently black) */
+    --surface: #1C1C1E;          /* Card/container background */
+    --surface-light: #2C2C2E;    /* Lighter surface for hover states */
+    --text-primary: #FFFFFF;      /* Main text color */
+    --text-secondary: #8E8E93;    /* Subtitle/secondary text */
+    --border: rgba(255, 255, 255, 0.1); /* Subtle borders */
+    
+    /* Component sizes - adjust if needed */
+    --tab-height: 50px;          /* Bottom navigation height */
+    --header-height: 44px;       /* Top header height */
 }
 
+/* 
+  ☀️ LIGHT MODE COLORS
+  These override the dark colors when light mode is active
+  
+  💡 Make sure there's enough contrast for readability!
+*/
 .light-mode {
     --background: #FFFFFF;
     --surface: #F2F2F7;
@@ -25,30 +58,44 @@
     --border: rgba(0, 0, 0, 0.1);
 }
 
-
-/* Reset and Base Styles */
+/* 
+  🔧 RESET & BASE STYLES
+  This removes default browser styles and sets up basics
+  
+  ⚠️ Be careful changing these - they affect everything!
+*/
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    user-select: none;
+    margin: 0;                              /* Remove default spacing */
+    padding: 0;                             /* Remove default padding */
+    box-sizing: border-box;                 /* Include padding in width calculations */
+    -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+    -webkit-touch-callout: none;            /* Disable callout on long press */
+    -webkit-user-select: none;              /* Disable text selection */
+    user-select: none;                      /* Disable text selection */
 }
 
+/* 
+  📱 BODY STYLES
+  Sets up the main app container
+  
+  The 'fixed' positioning and 100% dimensions make it feel like a native app
+*/
 body {
     background-color: var(--background);
     color: var(--text-primary);
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    min-height: 100vh;
-    overflow: hidden;
-    position: fixed;
+    min-height: 100vh;          /* Full viewport height */
+    overflow: hidden;           /* Prevent body scrolling */
+    position: fixed;            /* Lock in place like an app */
     width: 100%;
     height: 100%;
 }
 
-/* Native-like Status Bar */
+/* 
+  📱 STATUS BAR
+  Creates space at the top for phone status icons
+  This is especially important on iPhones with notches
+*/
 .status-bar {
     position: fixed;
     top: 0;
@@ -56,19 +103,24 @@ body {
     right: 0;
     height: var(--safe-area-inset-top);
     background: var(--background);
-    z-index: 9999;
+    z-index: 9999;              /* Keep on top of everything */
 }
 
-/* Native Header */
+/* 
+  🎯 HEADER
+  The navigation bar at the top of your app
+  
+  💡 The backdrop-filter creates a nice blur effect!
+*/
 .header {
     position: fixed;
-    top: var(--safe-area-inset-top);
+    top: var(--safe-area-inset-top);    /* Start below status bar */
     left: 0;
     right: 0;
     height: var(--header-height);
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: rgba(0, 0, 0, 0.8);     /* Semi-transparent background */
+    backdrop-filter: blur(20px);        /* Blur content behind it */
+    -webkit-backdrop-filter: blur(20px); /* For Safari */
     z-index: 1000;
     display: flex;
     align-items: center;
@@ -76,25 +128,34 @@ body {
     border-bottom: 0.5px solid var(--border);
 }
 
+/* Header title styling */
 .header-title {
     font-size: 17px;
     font-weight: 600;
-    letter-spacing: -0.4px;
+    letter-spacing: -0.4px;      /* Slightly tighter letter spacing */
 }
 
-/* Main Content Area */
+/* 
+  📜 MAIN CONTENT CONTAINER
+  This is where your page content goes
+  It's scrollable while the header and tab bar stay fixed
+*/
 .main-container {
     position: fixed;
+    /* Calculate position to fit between header and tab bar */
     top: calc(var(--safe-area-inset-top) + var(--header-height));
     left: 0;
     right: 0;
     bottom: calc(var(--tab-height) + var(--safe-area-inset-bottom));
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
+    overflow-y: auto;                    /* Allow vertical scrolling */
+    -webkit-overflow-scrolling: touch;   /* Smooth scrolling on iOS */
+    scroll-behavior: smooth;             /* Smooth scroll for all browsers */
 }
 
-/* Pull to Refresh */
+/* 
+  🔄 PULL TO REFRESH (Currently hidden)
+  This could be activated with JavaScript for a refresh gesture
+*/
 .pull-to-refresh {
     position: absolute;
     top: -60px;
@@ -110,6 +171,7 @@ body {
     opacity: 1;
 }
 
+/* Spinning loader animation */
 .spinner {
     width: 25px;
     height: 25px;
@@ -120,138 +182,179 @@ body {
     margin: 7.5px;
 }
 
+/* 
+  🎬 ANIMATIONS
+  @keyframes define reusable animations
+  
+  💡 You can create your own animations!
+*/
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
 
-/* Content Container */
+/* Content container transitions */
 #content-container {
     transition: opacity 0.15s ease, transform 0.15s ease;
 }
 
-/* Content Sections */
+/* Basic content padding */
 .content {
     padding: 20px 16px 40px;
 }
 
+/* 
+  📑 SECTION HEADERS
+  Used to label different sections of content
+  
+  💡 Keep these in ALL CAPS for consistency
+*/
 .section-header {
     font-size: 13px;
     font-weight: 400;
     color: var(--text-secondary);
-    text-transform: uppercase;
+    text-transform: uppercase;          /* Force uppercase */
     letter-spacing: -0.08px;
     margin: 20px 0 10px;
     padding: 0 16px;
 }
 
-/* Bottom Tab Bar */
+/* 
+  📱 BOTTOM TAB BAR
+  The main navigation at the bottom of your app
+  
+  This is one of the most important UI elements!
+*/
 .tab-bar {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
+    /* Account for safe area on phones with home indicators */
     height: calc(var(--tab-height) + var(--safe-area-inset-bottom));
     background: rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-top: 0.5px solid var(--border);
-    display: flex;
+    display: flex;                      /* Tabs arranged horizontally */
     padding-bottom: var(--safe-area-inset-bottom);
     z-index: 1000;
 }
 
+/* Individual tab styling */
 .tab-item {
-    flex: 1;
+    flex: 1;                           /* Each tab takes equal width */
     height: var(--tab-height);
     display: flex;
-    flex-direction: column;
+    flex-direction: column;            /* Icon above label */
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: opacity 0.2s;
 }
 
+/* Tab press effect */
 .tab-item:active {
     opacity: 0.6;
 }
 
+/* Tab icon styling */
 .tab-icon {
     font-size: 24px;
     margin-bottom: 2px;
     transition: color 0.2s;
 }
 
+/* Tab label styling */
 .tab-label {
     font-size: 10px;
     letter-spacing: -0.24px;
     transition: color 0.2s;
 }
 
+/* Active tab highlighting */
 .tab-item.active .tab-icon,
 .tab-item.active .tab-label {
-    color: var(--primary);
+    color: var(--primary);             /* Use primary color for active tab */
 }
 
+/* Inactive tab coloring */
 .tab-item:not(.active) .tab-icon,
 .tab-item:not(.active) .tab-label {
     color: var(--text-secondary);
 }
 
-/* Floating Action Button */
+/* 
+  ➕ FLOATING ACTION BUTTON (FAB)
+  The round button that floats above content
+  
+  💡 Great for primary actions like "Create New"
+*/
 .fab {
     position: fixed;
+    /* Position above tab bar with some spacing */
     bottom: calc(var(--tab-height) + var(--safe-area-inset-bottom) + 20px);
     right: 20px;
     width: 56px;
     height: 56px;
+    /* Gradient background for visual interest */
     background: linear-gradient(135deg, var(--primary), #5856D6);
-    border-radius: 28px;
+    border-radius: 28px;               /* Makes it circular */
     display: flex;
     align-items: center;
     justify-content: center;
+    /* Shadow makes it appear to float */
     box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
     z-index: 999;
     transition: transform 0.2s, box-shadow 0.2s;
     cursor: pointer;
 }
 
+/* FAB press effect */
 .fab:active {
-    transform: scale(0.95);
+    transform: scale(0.95);            /* Slightly smaller when pressed */
     box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
 }
 
+/* FAB icon */
 .fab-icon {
     font-size: 28px;
     color: white;
 }
 
-/* Modal/Bottom Sheet */
+/* 
+  📋 MODAL/BOTTOM SHEET
+  A popup that slides up from the bottom
+  
+  Used for menus, forms, or additional options
+*/
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.5);    /* Dark overlay */
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s, visibility 0.3s;
     z-index: 2000;
 }
 
+/* Show the modal */
 .modal-overlay.active {
     opacity: 1;
     visibility: visible;
 }
 
+/* The actual sheet that slides up */
 .bottom-sheet {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
     background: var(--surface);
-    border-radius: 12px 12px 0 0;
-    transform: translateY(100%);
+    border-radius: 12px 12px 0 0;      /* Rounded top corners */
+    transform: translateY(100%);       /* Hidden below screen */
     transition: transform 0.3s ease;
     z-index: 2001;
     max-height: 90vh;
@@ -259,10 +362,12 @@ body {
     -webkit-overflow-scrolling: touch;
 }
 
+/* Slide up when active */
 .modal-overlay.active .bottom-sheet {
     transform: translateY(0);
 }
 
+/* Handle bar at top of sheet (for visual affordance) */
 .sheet-handle {
     width: 36px;
     height: 5px;
@@ -271,12 +376,17 @@ body {
     margin: 8px auto 20px;
 }
 
+/* Sheet content padding */
 .sheet-content {
     padding: 0 20px 40px;
 }
 
-/* Shared Components */
-/* Native Cards */
+/* 
+  🃏 NATIVE CARDS
+  Reusable card component for displaying content
+  
+  These are used throughout the app for consistent styling
+*/
 .native-card {
     background: var(--surface);
     border-radius: 12px;
@@ -286,21 +396,25 @@ body {
     transform: scale(1);
 }
 
+/* Card press effect */
 .native-card:active {
     transform: scale(0.98);
     opacity: 0.8;
 }
 
+/* Card content padding */
 .card-content {
     padding: 16px;
 }
 
+/* Card header layout */
 .card-header {
     display: flex;
     align-items: center;
     margin-bottom: 8px;
 }
 
+/* Card icon styling */
 .card-icon {
     width: 40px;
     height: 40px;
@@ -313,12 +427,14 @@ body {
     font-size: 20px;
 }
 
+/* Card title */
 .card-title {
     font-size: 17px;
     font-weight: 600;
     letter-spacing: -0.4px;
 }
 
+/* Card subtitle/description */
 .card-subtitle {
     font-size: 15px;
     color: var(--text-secondary);
@@ -326,7 +442,12 @@ body {
     letter-spacing: -0.24px;
 }
 
-/* List Items */
+/* 
+  📋 LIST ITEMS
+  For displaying lists of options or actions
+  
+  Used in menus, settings, and selection lists
+*/
 .list-container {
     background: var(--surface);
     border-radius: 12px;
@@ -334,6 +455,7 @@ body {
     overflow: hidden;
 }
 
+/* Individual list item */
 .list-item {
     padding: 12px 16px;
     display: flex;
@@ -344,39 +466,50 @@ body {
     cursor: pointer;
 }
 
+/* List item hover/press state */
 .list-item:active {
     background-color: var(--surface-light);
 }
 
+/* Remove border from last item */
 .list-item:last-child {
     border-bottom: none;
 }
 
+/* List item content */
 .list-item-content {
     flex: 1;
 }
 
+/* List item title */
 .list-item-title {
     font-size: 17px;
     letter-spacing: -0.4px;
 }
 
+/* List item subtitle */
 .list-item-subtitle {
     font-size: 13px;
     color: var(--text-secondary);
     margin-top: 2px;
 }
 
+/* Chevron arrow for navigation */
 .chevron {
     color: var(--text-secondary);
     font-size: 16px;
 }
 
-/* Animations */
+/* 
+  🎬 SLIDE-IN ANIMATION
+  Used when content appears on screen
+  
+  Apply the 'animate-in' class to elements you want to animate
+*/
 @keyframes slideIn {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(20px);    /* Start below and fade in */
     }
     to {
         opacity: 1;

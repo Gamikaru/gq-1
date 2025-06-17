@@ -1,77 +1,135 @@
 <!-- Path: /index.html -->
+<!-- 
+  🏠 MAIN APP FILE - This is where your app starts!
+  
+  This file is like the "front door" of your app. It sets up:
+  - The basic structure that stays the same on every page
+  - The navigation bar at the bottom
+  - The header at the top
+  - The container where different pages will load
+  
+  FRONT-END DEVELOPER: This is your main file! You'll need to:
+  - Update the app title in the <title> tag
+  - Change the tab icons and labels to match your case study
+  - Modify the header to fit your app's branding
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+  <!-- These meta tags make your app work well on phones -->
   <meta charset="UTF-8">
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
+  <!-- 💡 CHANGE THIS: Update the title to match your app name -->
   <title>My Native App</title>
+  
+  <!-- This connects your CSS styling file -->
   <link rel="stylesheet" href="global.css">
+  
+  <!-- This connects your main JavaScript file -->
   <script src="main.js" defer></script>
-
 </head>
 
 <body>
-  <!-- Status Bar -->
+  <!-- Status Bar - This creates space at the top for phone status icons -->
   <div class="status-bar"></div>
 
-  <!-- Header -->
+  <!-- Header - The title bar at the top of your app -->
   <header class="header">
+    <!-- 💡 CHANGE THIS: Update to show your current page title -->
     <h1 class="header-title">Home</h1>
+    
+    <!-- This button toggles between light and dark mode -->
+    <!-- 💡 You might want to move this or style it differently -->
     <button onclick="toggleLightMode()">Toggle Mode</button>
   </header>
 
-  <!-- Main Content -->
+  <!-- Main Content Area - This is where your pages will load -->
   <div class="main-container" id="mainContainer">
-    <!-- Dynamic content will be loaded here -->
+    <!-- Don't put content here directly! It gets loaded from other HTML files -->
     <div id="content-container"></div>
   </div>
 
-  <!-- Bottom Tab Bar -->
+  <!-- 
+    📱 BOTTOM TAB BAR
+    This creates the navigation at the bottom of your app
+    
+    FRONT-END DEVELOPER: You'll need to:
+    1. Change the tab icons (currently using emojis)
+    2. Update the tab labels to match your app's sections
+    3. Update the file paths if you create new pages
+    4. Maybe add or remove tabs based on your needs
+  -->
   <nav class="tab-bar">
+    <!-- Each tab has:
+         - onclick: tells it what to do when tapped
+         - tab-icon: the visual icon (you can use emojis or icons)
+         - tab-label: the text under the icon
+    -->
     <div class="tab-item active" onclick="switchTab(0, 'Home', './html/home.html')">
       <div class="tab-icon">🏠</div>
       <div class="tab-label">Home</div>
     </div>
+    
     <div class="tab-item" onclick="switchTab(1, 'Explore', './html/explore.html')">
       <div class="tab-icon">🔍</div>
       <div class="tab-label">Explore</div>
     </div>
+    
     <div class="tab-item" onclick="switchTab(2, 'Create', './html/create.html')">
       <div class="tab-icon">➕</div>
       <div class="tab-label">Create</div>
     </div>
+    
     <div class="tab-item" onclick="switchTab(3, 'Profile', './html/profile.html')">
       <div class="tab-icon">👤</div>
       <div class="tab-label">Profile</div>
     </div>
   </nav>
 
-  <!-- Floating Action Button -->
+  <!-- 
+    ➕ FLOATING ACTION BUTTON (FAB)
+    This is the circular button that floats above your content
+    It opens a menu when clicked
+    
+    💡 You might not need this for your app - feel free to remove it!
+  -->
   <div class="fab" onclick="openBottomSheet()">
     <span class="fab-icon">+</span>
   </div>
 
-  <!-- Modal/Bottom Sheet -->
+  <!-- 
+    📋 MODAL/BOTTOM SHEET
+    This creates a popup menu that slides up from the bottom
+    Currently used by the FAB button
+    
+    💡 You can change what options appear here or remove it entirely
+  -->
   <div class="modal-overlay" id="modalOverlay" onclick="closeBottomSheet()">
     <div class="bottom-sheet" onclick="event.stopPropagation()">
       <div class="sheet-handle"></div>
       <div class="sheet-content">
         <h2 style="margin-bottom: 20px;">Create New</h2>
+        
+        <!-- These are the menu options -->
         <div class="list-container">
           <div class="list-item" onclick="createAction('Post')">
             <div class="list-item-content">
               <div class="list-item-title">📝 New Post</div>
             </div>
           </div>
+          
           <div class="list-item" onclick="createAction('Photo')">
             <div class="list-item-content">
               <div class="list-item-title">📷 Upload Photo</div>
             </div>
           </div>
+          
           <div class="list-item" onclick="createAction('Video')">
             <div class="list-item-content">
               <div class="list-item-title">🎥 Share Video</div>
@@ -82,7 +140,9 @@
     </div>
   </div>
 
+  <!-- This small script handles the light/dark mode toggle -->
   <script>
+    // This function switches between light and dark themes
     function toggleLightMode() {
       const body = document.body;
       if (body.classList.contains('light-mode')) {

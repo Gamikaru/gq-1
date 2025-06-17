@@ -1,65 +1,136 @@
- /* Path: /create.css */
-/* Create Tab Specific Styles */
+/* Path: /css/create.css */
+/* 
+  ➕ CREATE PAGE STYLES
+  
+  This file styles the Create page where users make new content
+  It adds special colors and effects to the creation options
+  
+  UX/UI DESIGNER: Use this file to:
+  1. Customize the gradient colors for each creation type
+  2. Add hover effects to make cards interactive
+  3. Style the drafts section differently if needed
+  4. Create a unique look for the create experience
+*/
 
-/* Create Action Card Icons */
+/* 
+  🎨 CREATE ACTION CARD ICON GRADIENTS
+  Each creation type has its own gradient color scheme
+  This helps users quickly identify different options
+  
+  💡 HOW TO CUSTOMIZE:
+  1. Change the gradient colors to match your brand
+  2. Use colors that represent each action
+  3. Keep enough contrast for readability
+*/
+
+/* Icon for text/post creation - Purple gradient */
 .create-post-icon {
     background: linear-gradient(135deg, #667EEA, #764BA2) !important;
+    /* The !important ensures this overrides the default gradient */
 }
 
+/* Icon for photo upload - Pink gradient */
 .create-photo-icon {
     background: linear-gradient(135deg, #F093FB, #F5576C) !important;
 }
 
+/* Icon for video sharing - Yellow/Pink gradient */
 .create-video-icon {
     background: linear-gradient(135deg, #FA709A, #FEE140) !important;
 }
 
-/* Create Cards Hover Effect */
+/* 
+  ✨ CREATE CARD HOVER EFFECT
+  Adds a subtle shimmer when hovering over creation options
+  This makes the interface feel more interactive
+*/
 .create-action-card {
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
+    cursor: pointer;          /* Shows clickable hand cursor */
+    position: relative;       /* Needed for the hover effect */
+    overflow: hidden;         /* Keeps the effect inside the card */
 }
 
+/* The shimmer effect - starts invisible */
 .create-action-card::before {
-    content: '';
+    content: '';              /* Empty element for the effect */
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
+    /* Gradient that goes from transparent to slightly white */
     background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.1));
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    opacity: 0;               /* Hidden by default */
+    transition: opacity 0.3s ease;  /* Smooth fade in/out */
 }
 
+/* Show the shimmer on hover */
 .create-action-card:hover::before {
     opacity: 1;
 }
 
-/* Draft Items */
+/* 
+  📂 DRAFT ITEMS STYLING
+  Makes draft items look different from regular items
+  Shows they're saved but not complete
+*/
 .draft-item {
     position: relative;
 }
 
+/* Draft subtitles use primary color and italic text */
 .draft-item .list-item-subtitle {
-    color: var(--primary);
-    font-style: italic;
+    color: var(--primary);    /* Uses your main brand color */
+    font-style: italic;       /* Italics show it's a draft */
 }
 
-/* Empty State for Drafts */
+/* 
+  🚫 EMPTY STATE FOR DRAFTS
+  Shown when there are no drafts to display
+  Helps avoid showing an empty section
+  
+  💡 You might want to:
+  - Change the message to match your app
+  - Use a different icon
+  - Add a button to create something new
+*/
 .empty-drafts {
     text-align: center;
     padding: 40px 20px;
-    color: var(--text-secondary);
+    color: var(--text-secondary);  /* Lighter color for empty state */
 }
 
+/* Large icon for empty state */
 .empty-drafts-icon {
     font-size: 48px;
     margin-bottom: 16px;
-    opacity: 0.5;
+    opacity: 0.5;             /* Semi-transparent for subtlety */
 }
 
+/* Message text for empty state */
 .empty-drafts-text {
     font-size: 16px;
 }
+
+/* 
+  💡 CUSTOMIZATION IDEAS:
+  
+  1. Add animation to cards when they appear:
+     .create-action-card {
+         animation: fadeInUp 0.5s ease;
+     }
+  
+  2. Create different card sizes:
+     .create-action-card.large {
+         min-height: 150px;
+     }
+  
+  3. Add status badges to drafts:
+     .draft-status {
+         background: var(--primary);
+         color: white;
+         padding: 4px 8px;
+         border-radius: 12px;
+         font-size: 12px;
+     }
+*/
