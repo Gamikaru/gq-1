@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tampa Solid Waste - Response Bot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- General Styling & App Container --- */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #1a202c;
+        }
+
+        #chat-container {
+            width: 100%;
+            max-width: 400px;
+            height: 80vh;
+            max-height: 700px;
+            background-color: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #d1d5db;
+        }
+
+        /* --- Chat Header (City of Tampa Theme) --- */
+        #chat-header {
+            background: linear-gradient(135deg, #004481, #0066a1); /* Tampa Blue/Green tones */
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #003366;
+            flex-shrink: 0;
+        }
+
+        #chat-header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 12px;
+            background-color: #ffffff;
+            padding: 5px;
+        }
+
+        #chat-header h2 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        #chat-header p {
+             margin: 0;
+             font-size: 12px;
+             opacity: 0.9;
+        }
+
+        /* --- Message Window --- */
+        #chat-window {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        #chat-window.thinking {
+            opacity: 0.8;
+        }
+
+        .chat-message {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            margin-bottom: 10px;
+            line-height: 1.5;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* AI (Bot) Message Styling */
+        .ai-message {
+            background-color: #edf2f7;
+            color: #2d3748;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        
+        /* User Message Styling */
+        .user-message {
+            background-color: #2b6cb0;
+            color: #ffffff;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        /* Disaster/Hurricane alert message styling */
+        .disaster-message {
+            background-color: #fffaf0;
+            color: #c05621;
+            border: 1px solid #fbd38d;
+            font-weight: 500;
+        }
+        
+        /* --- Typing Indicator --- */
+        .typing-indicator {
+            align-self: flex-start;
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background-color: #edf2f7;
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            margin: 0 2px;
+            background-color: #a0aec0;
+            border-radius: 50%;
+            display: inline-block;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
+
+        /* --- User Options / Input Area --- */
+        #user-options {
+            padding: 15px;
+            border-top: 1px solid #e2e8f0;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .option-button {
+            width: 100%;
+            background-color: #ffffff;
+            color: #2b6cb0;
+            border: 1px solid #cbd5e1;
+            padding: 12px 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+            transition: all 0.2s ease;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: slideInUp 0.5s forwards;
+        }
+
+        .option-button:hover {
+            background-color: #ebf8ff;
+            border-color: #2b6cb0;
+        }
+
+        .option-button.disaster {
+            color: #c05621;
+            border-color: #fbd38d;
+        }
+        .option-button.disaster:hover {
+            background-color: #fffaf0;
+            border-color: #c05621;
+        }
+        
+        @keyframes slideInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="chat-container">
+        <div id="chat-header">
+            <img src="https://placehold.co/100x100/ffffff/005a87?text=🌀" alt="Tampa Seal">
+            <div>
+                <h2>Response Bot</h2>
+                <p>City of Tampa Solid Waste</p>
+            </div>
+        </div>
+        
+        <div id="chat-window"></div>
+        
+        <div id="user-options"></div>
+    </div>
+
+    <script>
+        const chatWindow = document.getElementById('chat-window');
+        const userOptions = document.getElementById('user-options');
+        let isBotTyping = false;
+
+        const conversationTree = {
+            'start': {
+                text: "Welcome to the City of Tampa Solid Waste assistant. How can I help you?",
+                options: [
+                    { text: "🌀 Hurricane & Storm Info", next: 'disaster_start', isDisaster: true },
+                    { text: "🗑️ Report Collection Issue", next: 'collection_issue' },
+                    { text: "📅 Find My Collection Day", next: 'collection_day' },
+                    { text: "♻️ Recycling & Yard Waste", next: 'recycling_rules' }
+                ]
+            },
+            
+            // --- Disaster Response Flow ---
+            'disaster_start': {
+                text: "I can provide information for storm preparedness and recovery. What do you need help with?",
+                isDisaster: true,
+                options: [
+                    { text: "Before the Storm (Prep)", next: 'disaster_prep' },
+                    { text: "After the Storm (Recovery)", next: 'disaster_recovery' },
+                    { text: "Report a Hazard", next: 'disaster_hazard' },
+                    { text: "Main Menu", next: 'start' }
+                ]
+            },
+            'disaster_prep': {
+                text: "Before a storm, secure all garbage and recycling carts, and any loose items in your yard. Do not place any items at the curb.",
+                isDisaster: true,
+                options: [
+                    { text: "What about sandbags?", next: 'disaster_sandbags' },
+                    { text: "After-storm info", next: 'disaster_recovery' },
+                    { text: "Go back", next: 'disaster_start' }
+                ]
+            },
+            'disaster_sandbags': {
+                text: "Sandbag distribution locations and hours will be announced on Tampa.gov/AlertTampa. Check the site for the most current information.",
+                isDisaster: true,
+                options: [ { text: "Prep tips", next: 'disaster_prep' }, { text: "Go back", next: 'disaster_start' } ]
+            },
+            'disaster_recovery': {
+                text: "After the storm, please separate your debris at the curb into piles: vegetative (plants, branches), construction, and normal household waste. This helps us collect it faster.",
+                isDisaster: true,
+                options: [
+                    { text: "When will it be collected?", next: 'disaster_schedule' },
+                    { text: "Where are drop-off sites?", next: 'disaster_dropoff' },
+                    { text: "Go back", next: 'disaster_start' }
+                ]
+            },
+             'disaster_schedule': {
+                text: "Post-storm collection schedules will vary. We will announce a debris collection schedule on Tampa.gov as soon as routes are cleared and safe to access.",
+                isDisaster: true,
+                options: [ { text: "Debris sorting rules", next: 'disaster_recovery' }, { text: "Go back", next: 'disaster_start' } ]
+            },
+            'disaster_dropoff': {
+                text: "Emergency debris drop-off sites may be opened after a major storm. Locations will be published on Tampa.gov.",
+                isDisaster: true,
+                options: [ { text: "Debris sorting rules", next: 'disaster_recovery' }, { text: "Go back", next: 'disaster_start' } ]
+            },
+            'disaster_hazard': {
+                text: "To report a blocked road, downed power line, or other immediate public hazard, please call the City of Tampa's Emergency Hotline at (813) 274-8211 or dial 9-1-1 for life-threatening emergencies.",
+                isDisaster: true,
+                isEnd: true
+            },
+
+            // --- Regular Service Flows ---
+            'collection_issue': {
+                text: "I'm sorry to hear you're having an issue. The best way to report a missed pickup or damaged cart is through the online service portal.",
+                options: [
+                    { text: "Link me to the portal", next: 'portal_link' },
+                    { text: "Go back", next: 'start' }
+                ]
+            },
+            'portal_link': {
+                text: "You can find all service requests on the City's website at Tampa.gov/Services. It's the fastest way to get your issue logged.",
+                options: [ { text: "Other questions", next: 'anything_else' }, { text: "No, thanks.", next: 'end_chat' } ]
+            },
+            'collection_day': {
+                text: "You can find your specific collection schedule by entering your address on our website lookup tool at Tampa.gov/CollectionDay.",
+                options: [ { text: "Other questions", next: 'anything_else' }, { text: "No, thanks.", next: 'end_chat' } ]
+            },
+            'recycling_rules': {
+                text: "We're happy you're recycling! Key rules: please rinse containers, flatten cardboard, and do NOT bag your recyclables. For a full list of accepted items, visit Tampa.gov/Recycling.",
+                options: [ { text: "Other questions", next: 'anything_else' }, { text: "No, thanks.", next: 'end_chat' } ]
+            },
+
+            // --- Universal "Anything else?" and "End Chat" nodes ---
+            'anything_else': {
+                text: "Is there anything else I can help you with?",
+                options: [
+                    { text: "🌀 Hurricane & Storm Info", next: 'disaster_start', isDisaster: true },
+                    { text: "🗑️ Report Collection Issue", next: 'collection_issue' },
+                    { text: "📅 Find My Collection Day", next: 'collection_day' },
+                    { text: "♻️ Recycling & Yard Waste", next: 'recycling_rules' }
+                ]
+            },
+            'end_chat': {
+                text: "You're welcome. Thank you for helping keep Tampa clean and safe!",
+                isEnd: true
+            }
+        };
+
+        function scrollToBottom() {
+            requestAnimationFrame(() => { chatWindow.scrollTop = chatWindow.scrollHeight; });
+        }
+        
+        function clearOptions() {
+            userOptions.innerHTML = '';
+        }
+
+        function displayUserMessage(text) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message', 'user-message');
+            messageElement.textContent = text;
+            chatWindow.appendChild(messageElement);
+            scrollToBottom();
+        }
+
+        function showTypingIndicator() {
+            isBotTyping = true;
+            chatWindow.classList.add('thinking');
+            const indicator = document.createElement('div');
+            indicator.id = 'typing-indicator';
+            indicator.classList.add('typing-indicator');
+            indicator.innerHTML = '<span></span><span></span><span></span>';
+            chatWindow.appendChild(indicator);
+            scrollToBottom();
+        }
+
+        function hideTypingIndicator() {
+            isBotTyping = false;
+            chatWindow.classList.remove('thinking');
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) indicator.remove();
+        }
+
+        function typeMessage(element, text, onComplete) {
+            let i = 0;
+            element.textContent = "";
+            isBotTyping = true;
+            
+            function typeWriter() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    scrollToBottom();
+                    const typingSpeed = Math.random() * 25 + 15;
+                    setTimeout(typeWriter, typingSpeed);
+                } else {
+                    isBotTyping = false;
+                    if (onComplete) onComplete();
+                }
+            }
+            typeWriter();
+        }
+
+        function advanceConversation(stepKey) {
+            const currentStep = conversationTree[stepKey];
+            const textToDisplay = typeof currentStep.text === 'function' ? currentStep.text() : currentStep.text;
+            
+            const showOptionsCallback = () => {
+                if (currentStep.isEnd) {
+                    displayOptions([{text: "Return to Main Menu", next: 'start'}]);
+                } else {
+                    displayOptions(currentStep.options);
+                }
+            };
+            
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message', 'ai-message');
+            if(currentStep.isDisaster) {
+                 messageElement.classList.add('disaster-message');
+            }
+
+            if (Array.isArray(textToDisplay)) {
+                let messageIndex = 0;
+                function typeNextMessage() {
+                    if (messageIndex < textToDisplay.length) {
+                        const msgEl = document.createElement('div');
+                        msgEl.classList.add('chat-message', 'ai-message');
+                        if(currentStep.isDisaster) { msgEl.classList.add('disaster-message'); }
+                        chatWindow.appendChild(msgEl);
+                        scrollToBottom();
+                        
+                        typeMessage(msgEl, textToDisplay[messageIndex], () => {
+                            messageIndex++;
+                            setTimeout(typeNextMessage, 300);
+                        });
+                    } else {
+                        showOptionsCallback();
+                    }
+                }
+                typeNextMessage();
+            } else {
+                chatWindow.appendChild(messageElement);
+                scrollToBottom();
+                typeMessage(messageElement, textToDisplay, showOptionsCallback);
+            }
+        }
+        
+        function displayOptions(options) {
+            clearOptions();
+            options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.classList.add('option-button');
+                if(option.isDisaster) { button.classList.add('disaster'); }
+                button.textContent = option.text;
+                button.style.animationDelay = `${index * 0.1}s`;
+                button.onclick = (e) => handleOptionClick(option);
+                userOptions.appendChild(button);
+            });
+        }
+        
+        function handleOptionClick(option) {
+            if (isBotTyping) return;
+
+            const { text: userText, next: nextStepKey } = option;
+            
+            displayUserMessage(userText);
+            clearOptions();
+
+            setTimeout(() => {
+                showTypingIndicator();
+                const thinkingTime = 700; 
+                setTimeout(() => {
+                    hideTypingIndicator();
+                    advanceConversation(nextStepKey);
+                }, thinkingTime);
+            }, 300);
+        }
+
+        function startChat() {
+            setTimeout(() => {
+                advanceConversation('start');
+            }, 500);
+        }
+
+        startChat();
+
+    </script>
+</body>
+</html>

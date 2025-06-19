@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HCSO - Virtual Partner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- General Styling & App Container --- */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #eef2f6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #1e293b;
+        }
+
+        #chat-container {
+            width: 100%;
+            max-width: 400px;
+            height: 80vh;
+            max-height: 700px;
+            background-color: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #d1d5db;
+        }
+
+        /* --- Chat Header (HCSO Theme) --- */
+        #chat-header {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #334155;
+            flex-shrink: 0;
+        }
+
+        #chat-header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 12px;
+            background-color: #facc15; /* Gold/Yellow for the star */
+            padding: 5px;
+        }
+
+        #chat-header h2 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        #chat-header p {
+             margin: 0;
+             font-size: 12px;
+             opacity: 0.8;
+        }
+
+        /* --- Message Window --- */
+        #chat-window {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        #chat-window.thinking {
+            opacity: 0.8;
+        }
+
+        .chat-message {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            margin-bottom: 10px;
+            line-height: 1.5;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* AI (Bot) Message Styling */
+        .ai-message {
+            background-color: #e2e8f0;
+            color: #1e293b;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        
+        /* User Message Styling */
+        .user-message {
+            background-color: #2563eb;
+            color: #ffffff;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        /* Critical alert message styling */
+        .critical-message {
+            background-color: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fca5a5;
+            font-weight: 600;
+        }
+        
+        /* --- Typing Indicator --- */
+        .typing-indicator {
+            align-self: flex-start;
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background-color: #e2e8f0;
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            margin: 0 2px;
+            background-color: #64748b;
+            border-radius: 50%;
+            display: inline-block;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
+
+        /* --- User Options / Input Area --- */
+        #user-options {
+            padding: 15px;
+            border-top: 1px solid #e2e8f0;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .option-button {
+            width: 100%;
+            background-color: #ffffff;
+            color: #2563eb;
+            border: 1px solid #d1d5db;
+            padding: 12px 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+            transition: all 0.2s ease;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: slideInUp 0.5s forwards;
+        }
+
+        .option-button:hover {
+            background-color: #eff6ff;
+            border-color: #2563eb;
+        }
+
+        .option-button.critical {
+            color: #b91c1c;
+            border-color: #fca5a5;
+        }
+        .option-button.critical:hover {
+            background-color: #fef2f2;
+            border-color: #b91c1c;
+        }
+        
+        @keyframes slideInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="chat-container">
+        <div id="chat-header">
+            <img src="https://placehold.co/100x100/0f172a/facc15?text=★" alt="HCSO Star">
+            <div>
+                <h2>Virtual Partner</h2>
+                <p>Hillsborough County Sheriff's Office</p>
+            </div>
+        </div>
+        
+        <div id="chat-window"></div>
+        
+        <div id="user-options"></div>
+    </div>
+
+    <script>
+        const chatWindow = document.getElementById('chat-window');
+        const userOptions = document.getElementById('user-options');
+        let isBotTyping = false;
+
+        const conversationTree = {
+            'start': {
+                text: "Welcome to the HCSO Virtual Partner. I am here to assist you with non-emergency services and information.",
+                options: [
+                    { text: "🚨 Report a Non-Emergency", next: 'report_start' },
+                    { text: "🔔 Get Safety Alerts", next: 'alerts_start' },
+                    { text: "🕵️ Submit an Anonymous Tip", next: 'tip_start' },
+                    { text: "🤝 Community Resources", next: 'community_start' }
+                ]
+            },
+            'emergency_redirect': {
+                text: "For any emergency, crime in progress, or immediate threat to life or property, please DISCONNECT and DIAL 9-1-1 immediately.",
+                isEnd: true,
+                isCritical: true,
+            },
+            'report_start': {
+                text: [ "I can help you file a non-emergency report.", "First, please confirm: Is this an emergency or a crime currently in progress?" ],
+                options: [
+                    { text: "No, it's not an emergency.", next: 'report_type' },
+                    { text: "Yes, it is an EMERGENCY.", next: 'emergency_redirect', isCritical: true }
+                ]
+            },
+            'report_type': {
+                text: "Thank you for clarifying. What type of non-emergency incident would you like to report?",
+                options: [
+                    { text: "Theft / Lost Property", next: 'report_details' },
+                    { text: "Suspicious Activity", next: 'report_details' },
+                    { text: "Traffic Complaint", next: 'report_details' },
+                    { text: "Go back", next: 'start' }
+                ]
+            },
+            'report_details': {
+                text: "To file an official report, you will be connected to our secure online portal or you can call our non-emergency line at (813) 247-8200. This chat cannot take official reports.",
+                options: [
+                    { text: "Provide a link to the portal.", next: 'portal_link' },
+                    { text: "Give me the number again", next: 'report_details' },
+                    { text: "Something else", next: 'anything_else' }
+                ]
+            },
+             'portal_link': {
+                text: "Our secure reporting portal can be found at HCSO.org/Report. Please be ready to provide as much detail as possible.",
+                options: [ { text: "Ask Another Question", next: 'anything_else' }, { text: "No, I'm all set.", next: 'end_chat' } ]
+            },
+            'alerts_start': {
+                text: "Staying informed is key to staying safe. We offer real-time alerts through our HCFL Alert system.",
+                options: [ { text: "How do I sign up?", next: 'alerts_signup' }, { text: "What kind of alerts?", next: 'alerts_types' }, { text: "Go back", next: 'start' } ]
+            },
+            'alerts_signup': {
+                text: "You can register for free at HCFLGov.net/HCFLAlert. You can customize the types of notifications you receive and how you receive them (text, email, phone call).",
+                 options: [ { text: "What kind of alerts?", next: 'alerts_types' }, { text: "Okay, take me back", next: 'anything_else' } ]
+            },
+            'alerts_types': {
+                text: "Alerts can include severe weather warnings, traffic advisories for major roadways, local police activity, and important community announcements.",
+                 options: [ { text: "How do I sign up?", next: 'alerts_signup' }, { text: "Okay, take me back", next: 'anything_else' } ]
+            },
+            'tip_start': {
+                text: "If you see something, say something. Your anonymous tip could be crucial. What is your tip regarding?",
+                options: [
+                    { text: "Drug Activity", next: 'tip_submit' },
+                    { text: "Wanted Person Location", next: 'tip_submit' },
+                    { text: "Other Crime Concern", next: 'tip_submit' },
+                    { text: "Is this really anonymous?", next: 'tip_anonymous' },
+                ]
+            },
+             'tip_anonymous': {
+                text: "Yes. All tips submitted are confidential. You can also contact Crime Stoppers of Tampa Bay at 1-800-873-TIPS to remain completely anonymous and be eligible for a cash reward.",
+                 options: [ { text: "I'm ready to submit a tip", next: 'tip_start' }, { text: "Okay, take me back", next: 'anything_else' } ]
+            },
+            'tip_submit': {
+                text: "Thank you. To submit your tip, please use the secure form on our website or call Crime Stoppers. Do not leave sensitive details in this chat.",
+                 options: [ { text: "Ask Another Question", next: 'anything_else' }, { text: "No, I'm all set.", next: 'end_chat' } ]
+            },
+             'community_start': {
+                text: "We are proud to serve our community. How can I connect you?",
+                options: [ { text: "Crime Prevention Tips", next: 'community_prevention' }, { text: "District Office Locations", next: 'community_locations' }, { text: "Go back", next: 'start' } ]
+            },
+            'community_prevention': {
+                text: "Visit HCSO.org/Crime-Prevention for valuable tips on how to protect your home, vehicle, and identity from criminals.",
+                options: [ { text: "Ask Another Question", next: 'anything_else' }, { text: "No, I'm all set.", next: 'end_chat' } ]
+            },
+            'community_locations': {
+                text: "HCSO has several district offices to serve you. You can find the one nearest to you by visiting the 'Find My District' page on our website.",
+                options: [ { text: "Ask Another Question", next: 'anything_else' }, { text: "No, I'm all set.", next: 'end_chat' } ]
+            },
+            'anything_else': {
+                text: "What else can I help you with?",
+                options: [
+                    { text: "🚨 Report a Non-Emergency", next: 'report_start' },
+                    { text: "🔔 Get Safety Alerts", next: 'alerts_start' },
+                    { text: "🕵️ Submit an Anonymous Tip", next: 'tip_start' },
+                    { text: "🤝 Community Resources", next: 'community_start' }
+                ]
+            },
+            'end_chat': {
+                text: "Thank you for using the HCSO Virtual Partner. Stay safe.",
+                isEnd: true
+            }
+        };
+
+        function scrollToBottom() {
+            requestAnimationFrame(() => { chatWindow.scrollTop = chatWindow.scrollHeight; });
+        }
+        
+        function clearOptions() {
+            userOptions.innerHTML = '';
+        }
+
+        function displayUserMessage(text) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message', 'user-message');
+            messageElement.textContent = text;
+            chatWindow.appendChild(messageElement);
+            scrollToBottom();
+        }
+
+        function showTypingIndicator() {
+            isBotTyping = true;
+            chatWindow.classList.add('thinking');
+            const indicator = document.createElement('div');
+            indicator.id = 'typing-indicator';
+            indicator.classList.add('typing-indicator');
+            indicator.innerHTML = '<span></span><span></span><span></span>';
+            chatWindow.appendChild(indicator);
+            scrollToBottom();
+        }
+
+        function hideTypingIndicator() {
+            isBotTyping = false;
+            chatWindow.classList.remove('thinking');
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) indicator.remove();
+        }
+
+        function typeMessage(element, text, onComplete) {
+            let i = 0;
+            element.textContent = "";
+            isBotTyping = true;
+            
+            function typeWriter() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    scrollToBottom();
+                    const typingSpeed = Math.random() * 25 + 15;
+                    setTimeout(typeWriter, typingSpeed);
+                } else {
+                    isBotTyping = false;
+                    if (onComplete) onComplete();
+                }
+            }
+            typeWriter();
+        }
+
+        function advanceConversation(stepKey) {
+            const currentStep = conversationTree[stepKey];
+            const textToDisplay = typeof currentStep.text === 'function' ? currentStep.text() : currentStep.text;
+            
+            const showOptionsCallback = () => {
+                if (currentStep.isEnd) {
+                    clearOptions();
+                    return;
+                }
+                displayOptions(currentStep.options);
+            };
+            
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message', 'ai-message');
+            if(currentStep.isCritical) {
+                 messageElement.classList.add('critical-message');
+            }
+
+            if (Array.isArray(textToDisplay)) {
+                let messageIndex = 0;
+                function typeNextMessage() {
+                    if (messageIndex < textToDisplay.length) {
+                        const msgEl = document.createElement('div');
+                        msgEl.classList.add('chat-message', 'ai-message');
+                        chatWindow.appendChild(msgEl);
+                        scrollToBottom();
+                        
+                        typeMessage(msgEl, textToDisplay[messageIndex], () => {
+                            messageIndex++;
+                            setTimeout(typeNextMessage, 300);
+                        });
+                    } else {
+                        showOptionsCallback();
+                    }
+                }
+                typeNextMessage();
+            } else {
+                chatWindow.appendChild(messageElement);
+                scrollToBottom();
+                typeMessage(messageElement, textToDisplay, showOptionsCallback);
+            }
+        }
+        
+        function displayOptions(options) {
+            clearOptions();
+            options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.classList.add('option-button');
+                if(option.isCritical) { button.classList.add('critical'); }
+                button.textContent = option.text;
+                button.style.animationDelay = `${index * 0.1}s`;
+                button.onclick = (e) => handleOptionClick(option);
+                userOptions.appendChild(button);
+            });
+        }
+        
+        function handleOptionClick(option) {
+            if (isBotTyping) return;
+
+            const { text: userText, next: nextStepKey } = option;
+            
+            displayUserMessage(userText);
+            clearOptions();
+
+            setTimeout(() => {
+                showTypingIndicator();
+                const thinkingTime = 800; 
+                setTimeout(() => {
+                    hideTypingIndicator();
+                    advanceConversation(nextStepKey);
+                }, thinkingTime);
+            }, 300);
+        }
+
+        function startChat() {
+            setTimeout(() => {
+                advanceConversation('start');
+            }, 500);
+        }
+
+        startChat();
+
+    </script>
+</body>
+</html>

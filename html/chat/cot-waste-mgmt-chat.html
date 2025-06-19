@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tampa Solid Waste - Smart Bot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- General Styling & App Container --- */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #1a202c;
+        }
+
+        #chat-container {
+            width: 100%;
+            max-width: 400px;
+            height: 80vh;
+            max-height: 700px;
+            background-color: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #d1d5db;
+        }
+
+        /* --- Chat Header (Smart/Green Theme) --- */
+        #chat-header {
+            background: linear-gradient(135deg, #047857, #065f46); /* Emerald Green Gradient */
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #064e3b;
+            flex-shrink: 0;
+        }
+
+        #chat-header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 12px;
+            background-color: #ffffff;
+            padding: 6px;
+        }
+
+        #chat-header h2 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        #chat-header p {
+             margin: 0;
+             font-size: 12px;
+             opacity: 0.9;
+        }
+
+        /* --- Message Window --- */
+        #chat-window {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        #chat-window.thinking {
+            opacity: 0.8;
+        }
+
+        .chat-message {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            margin-bottom: 10px;
+            line-height: 1.5;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* AI (Bot) Message Styling */
+        .ai-message {
+            background-color: #f0fdf4;
+            color: #1f2937;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        
+        /* User Message Styling */
+        .user-message {
+            background-color: #059669;
+            color: #ffffff;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        
+        /* --- Typing Indicator --- */
+        .typing-indicator {
+            align-self: flex-start;
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background-color: #f0fdf4;
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            margin: 0 2px;
+            background-color: #9ca3af;
+            border-radius: 50%;
+            display: inline-block;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
+
+        /* --- User Options / Input Area --- */
+        #user-options {
+            padding: 15px;
+            border-top: 1px solid #e2e8f0;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .option-button {
+            width: 100%;
+            background-color: #ffffff;
+            color: #059669;
+            border: 1px solid #d1d5db;
+            padding: 12px 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+            transition: all 0.2s ease;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: slideInUp 0.5s forwards;
+        }
+
+        .option-button:hover {
+            background-color: #f0fdf4;
+            border-color: #059669;
+        }
+        
+        @keyframes slideInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="chat-container">
+        <div id="chat-header">
+            <img src="https://placehold.co/100x100/ffffff/059669?text=♻️" alt="Recycle Icon">
+            <div>
+                <h2>Smart Waste Bot</h2>
+                <p>City of Tampa Solid Waste</p>
+            </div>
+        </div>
+        
+        <div id="chat-window"></div>
+        
+        <div id="user-options"></div>
+    </div>
+
+    <script>
+        const chatWindow = document.getElementById('chat-window');
+        const userOptions = document.getElementById('user-options');
+        let isBotTyping = false;
+
+        const conversationTree = {
+            'start': {
+                text: "Welcome to Tampa's Smart Waste assistant. I can provide real-time updates for a more efficient service.",
+                options: [
+                    { text: "🛰️ Check My Bin Status", next: 'bin_status' },
+                    { text: "🚚 Get Collection Updates", next: 'collection_update' },
+                    { text: "📈 View My Recycling Score", next: 'recycling_score' },
+                    { text: "❓ General Questions", next: 'general_questions' }
+                ]
+            },
+            
+            // --- Smart Bin Status Flow ---
+            'bin_status': {
+                text: "Accessing real-time data from your smart bin...",
+                isEnd: false, // This will have a follow-up
+                action: (callback) => { // Use an action to create a delay and then proceed
+                    setTimeout(() => {
+                        advanceConversation('bin_status_result');
+                    }, 2000); // 2 second delay to simulate fetching data
+                }
+            },
+            'bin_status_result': {
+                text: "Your trash bin is currently at 85% capacity. Your recycling bin is at 40%.",
+                options: [
+                    { text: "When is my next collection?", next: 'collection_update' },
+                    { text: "What's a Recycling Score?", next: 'recycling_score' },
+                    { text: "Okay, thanks!", next: 'anything_else' }
+                ]
+            },
+
+            // --- Real-time Collection Update Flow ---
+            'collection_update': {
+                text: "Checking our dynamic route optimization system...",
+                 isEnd: false, 
+                action: (callback) => {
+                    setTimeout(() => {
+                        advanceConversation('collection_update_result');
+                    }, 2000);
+                }
+            },
+            'collection_update_result': {
+                text: "Our truck is running efficiently today! Your estimated collection time is between 2:15 PM and 2:45 PM.",
+                options: [
+                    { text: "Can you notify me?", next: 'collection_notify' },
+                    { text: "Check my bin status", next: 'bin_status' },
+                    { text: "Great, thank you!", next: 'anything_else' }
+                ]
+            },
+            'collection_notify': {
+                text: "Absolutely. I've set a notification to alert you 15 minutes before the truck arrives at your address.",
+                options: [ { text: "Perfect!", next: 'anything_else' } ]
+            },
+
+            // --- Recycling Score Flow ---
+            'recycling_score': {
+                text: "Analyzing your recent recycling data...",
+                 isEnd: false,
+                action: (callback) => {
+                    setTimeout(() => {
+                        advanceConversation('recycling_score_result');
+                    }, 2000);
+                }
+            },
+            'recycling_score_result': {
+                text: "Your household has a Recycling Score of A-! Great job on sorting and rinsing. Tip: Remember to flatten all cardboard boxes to save space.",
+                options: [
+                    { text: "What can I recycle?", next: 'recycling_rules' },
+                    { text: "How do you know this?", next: 'recycling_privacy' },
+                    { text: "Go back", next: 'start' }
+                ]
+            },
+            'recycling_privacy': {
+                text: "Our smart system uses weight and contamination sensors to create an anonymous score. This helps us provide better feedback to the community without compromising your privacy.",
+                 options: [ { text: "Tell me the recycling rules", next: 'recycling_rules' }, { text: "Got it, thanks!", next: 'anything_else' } ]
+            },
+            
+            // --- Regular Service Flows ---
+            'general_questions': {
+                text: "I can also help with standard service questions. What do you need?",
+                options: [
+                    { text: "Report a collection issue", next: 'collection_issue' },
+                    { text: "Find my standard collection day", next: 'collection_day' },
+                    { text: "What are the recycling rules?", next: 'recycling_rules' },
+                    { text: "Go back", next: 'start' }
+                ]
+            },
+            'collection_issue': {
+                text: "To report a missed pickup or damaged cart, please use the online service portal at Tampa.gov/Services. It's the fastest way to log the issue.",
+                options: [ { text: "Other questions", next: 'anything_else' }, { text: "No, thanks.", next: 'end_chat' } ]
+            },
+            'collection_day': {
+                text: "Your standard collection schedule can be found by entering your address on our website lookup tool at Tampa.gov/CollectionDay.",
+                options: [ { text: "Other questions", next: 'anything_else' }, { text: "No, thanks.", next: 'end_chat' } ]
+            },
+            'recycling_rules': {
+                text: "Of course! Please rinse all containers, flatten cardboard, and never bag your recyclables. For a full guide, visit Tampa.gov/Recycling.",
+                options: [ { text: "Other questions", next: 'anything_else' }, { text: "No, thanks.", next: 'end_chat' } ]
+            },
+
+            // --- Universal "Anything else?" and "End Chat" nodes ---
+            'anything_else': {
+                text: "Is there anything else I can help with?",
+                options: [
+                    { text: "🛰️ Check My Bin Status", next: 'bin_status' },
+                    { text: "🚚 Get Collection Updates", next: 'collection_update' },
+                    { text: "📈 View My Recycling Score", next: 'recycling_score' },
+                    { text: "❓ General Questions", next: 'general_questions' }
+                ]
+            },
+            'end_chat': {
+                text: "You're welcome. Thank you for using Tampa's Smart Waste service!",
+                isEnd: true
+            }
+        };
+
+        function scrollToBottom() {
+            requestAnimationFrame(() => { chatWindow.scrollTop = chatWindow.scrollHeight; });
+        }
+        
+        function clearOptions() {
+            userOptions.innerHTML = '';
+        }
+
+        function displayUserMessage(text) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message', 'user-message');
+            messageElement.textContent = text;
+            chatWindow.appendChild(messageElement);
+            scrollToBottom();
+        }
+
+        function showTypingIndicator() {
+            isBotTyping = true;
+            chatWindow.classList.add('thinking');
+            const indicator = document.createElement('div');
+            indicator.id = 'typing-indicator';
+            indicator.classList.add('typing-indicator');
+            indicator.innerHTML = '<span></span><span></span><span></span>';
+            chatWindow.appendChild(indicator);
+            scrollToBottom();
+        }
+
+        function hideTypingIndicator() {
+            isBotTyping = false;
+            chatWindow.classList.remove('thinking');
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) indicator.remove();
+        }
+
+        function typeMessage(element, text, onComplete) {
+            let i = 0;
+            element.textContent = "";
+            isBotTyping = true;
+            
+            function typeWriter() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    scrollToBottom();
+                    const typingSpeed = Math.random() * 25 + 15;
+                    setTimeout(typeWriter, typingSpeed);
+                } else {
+                    isBotTyping = false;
+                    if (onComplete) onComplete();
+                }
+            }
+            typeWriter();
+        }
+
+        function advanceConversation(stepKey) {
+            const currentStep = conversationTree[stepKey];
+            const textToDisplay = typeof currentStep.text === 'function' ? currentStep.text() : currentStep.text;
+            
+            const showOptionsCallback = () => {
+                if (currentStep.isEnd) {
+                    displayOptions([{text: "Return to Main Menu", next: 'start'}]);
+                } else if(currentStep.options) { // Check if there are options to display
+                    displayOptions(currentStep.options);
+                }
+            };
+            
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message', 'ai-message');
+            
+            // This handles steps that have an action (like a delay) instead of options
+            if (currentStep.action) {
+                showTypingIndicator();
+                const thinkingTime = 700;
+                setTimeout(() => {
+                    hideTypingIndicator();
+                    const messageElement = document.createElement('div');
+                    messageElement.classList.add('chat-message', 'ai-message');
+                    chatWindow.appendChild(messageElement);
+                    scrollToBottom();
+                    typeMessage(messageElement, textToDisplay, () => currentStep.action());
+                }, thinkingTime);
+                return;
+            }
+
+            chatWindow.appendChild(messageElement);
+            scrollToBottom();
+            typeMessage(messageElement, textToDisplay, showOptionsCallback);
+        }
+        
+        function displayOptions(options) {
+            clearOptions();
+            options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.classList.add('option-button');
+                button.textContent = option.text;
+                button.style.animationDelay = `${index * 0.1}s`;
+                button.onclick = (e) => handleOptionClick(option);
+                userOptions.appendChild(button);
+            });
+        }
+        
+        function handleOptionClick(option) {
+            if (isBotTyping) return;
+
+            const { text: userText, next: nextStepKey } = option;
+            
+            displayUserMessage(userText);
+clearOptions();
+
+            // All simulated data fetching happens in the advanceConversation function
+            // so we can go straight to the next step.
+            showTypingIndicator();
+            const thinkingTime = 700; 
+            setTimeout(() => {
+                hideTypingIndicator();
+                advanceConversation(nextStepKey);
+            }, thinkingTime);
+        }
+
+        function startChat() {
+            setTimeout(() => {
+                advanceConversation('start');
+            }, 500);
+        }
+
+        startChat();
+
+    </script>
+</body>
+</html>

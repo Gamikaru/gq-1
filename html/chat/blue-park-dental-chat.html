@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blue Park Dental - Virtual Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- General Styling & App Container --- */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #334155;
+        }
+
+        #chat-container {
+            width: 100%;
+            max-width: 400px; /* Simulates a mobile screen width */
+            height: 80vh;
+            max-height: 700px;
+            background-color: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* --- Chat Header --- */
+        #chat-header {
+            background: linear-gradient(135deg, #4a90e2, #2e6ab4);
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #e2e8f0;
+            flex-shrink: 0;
+        }
+
+        #chat-header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 12px;
+            background-color: white;
+            padding: 4px;
+        }
+
+        #chat-header h2 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        #chat-header p {
+             margin: 0;
+             font-size: 12px;
+             opacity: 0.9;
+        }
+
+        /* --- Message Window --- */
+        #chat-window {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        /* NEW: Class for when the bot is 'thinking' */
+        #chat-window.thinking {
+            opacity: 0.8;
+        }
+
+        .chat-message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            margin-bottom: 10px;
+            line-height: 1.5;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* AI (Bot) Message Styling */
+        .ai-message {
+            background-color: #f1f5f9;
+            color: #1e293b;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        
+        /* User Message Styling */
+        .user-message {
+            background-color: #3b82f6;
+            color: #ffffff;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        
+        /* --- Typing Indicator --- */
+        .typing-indicator {
+            align-self: flex-start;
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background-color: #f1f5f9;
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            margin: 0 2px;
+            background-color: #94a3b8;
+            border-radius: 50%;
+            display: inline-block;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
+
+        /* --- User Options / Input Area --- */
+        #user-options {
+            padding: 15px;
+            border-top: 1px solid #e2e8f0;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-shrink: 0;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .option-button {
+            width: 100%;
+            background-color: #ffffff;
+            color: #3b82f6;
+            border: 1px solid #cbd5e1;
+            padding: 12px 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+            transition: all 0.2s ease;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: slideInUp 0.5s forwards;
+        }
+
+        .option-button:hover {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+        }
+
+        .option-button.selected {
+             background-color: #dbeafe;
+             border-color: #3b82f6;
+             animation: flash 0.5s ease;
+        }
+        
+        @keyframes slideInUp {
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+
+        @keyframes flash {
+            0% { background-color: #eff6ff; }
+            50% { background-color: #dbeafe; }
+            100% { background-color: #eff6ff; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="chat-container">
+        <div id="chat-header">
+            <img src="https://placehold.co/100x100/FFFFFF/4A90E2?text=BPD" alt="Blue Park Dental Logo">
+            <div>
+                <h2>Virtual Assistant</h2>
+                <p>Blue Park Dental</p>
+            </div>
+        </div>
+        
+        <div id="chat-window"></div>
+        
+        <div id="user-options"></div>
+    </div>
+
+    <script>
+        const chatWindow = document.getElementById('chat-window');
+        const userOptions = document.getElementById('user-options');
+
+        let conversationContext = {
+            interestedService: null 
+        };
+        let isBotTyping = false; // To prevent user actions while bot is typing
+
+        const conversationTree = {
+            'start': {
+                text: "Welcome to Blue Park Dental! I'm your virtual assistant. How can I help you get started?",
+                options: [
+                    { text: "🗓️ Book an appointment", next: 'booking_start' },
+                    { text: "🦷 Learn about services", next: 'services_overview' },
+                    { text: "🏥 General questions", next: 'practice_info' },
+                    { text: "😊 Help with dental anxiety", next: 'anxiety_support' }
+                ],
+                action: () => { conversationContext.interestedService = null; }
+            },
+            'booking_start': {
+                text: () => {
+                    if (conversationContext.interestedService) {
+                        return `Great! Let's get you set up for a ${conversationContext.interestedService} consultation. First, are you a new or an existing patient?`;
+                    }
+                    return "Of course! Happy to help you book an appointment. Are you a new or an existing patient?";
+                },
+                options: [
+                    { text: "I'm a new patient", next: 'booking_new' },
+                    { text: "I'm an existing patient", next: 'booking_existing' },
+                    { text: "Actually, go back", next: 'start' }
+                ]
+            },
+            'booking_new': {
+                text: "Wonderful, welcome to our practice! To ensure we get all your details right, please give our friendly front desk a call at (123) 456-7890. They'll find the perfect time for your first visit.",
+                options: [ { text: "What are your hours?", next: 'hours_info' }, { text: "Return to Main Menu", next: 'start' } ],
+            },
+            'booking_existing': {
+                text: "Welcome back! The quickest way to book is by calling us at (123) 456-7890 so we can pull up your file. You can also use our patient portal.",
+                options: [ { text: "Tell me about other services", next: 'services_overview' }, { text: "Return to Main Menu", next: 'start' } ],
+            },
+            'services_overview': {
+                text: "We're proud to offer a range of services for a healthy, beautiful smile. Which area are you most interested in?",
+                options: [
+                    { text: "Preventive Care", next: 'services_preventive', context: "Preventive Care" },
+                    { text: "Restorative Dentistry", next: 'services_restorative', context: "Restorative Dentistry" },
+                    { text: "Cosmetic Dentistry", next: 'services_cosmetic', context: "Cosmetic Dentistry" },
+                    { text: "Go back to start", next: 'start' }
+                ]
+            },
+            'services_preventive': {
+                text: "Preventive care is key! This includes regular cleanings, comprehensive exams, and x-rays to catch issues early and maintain your oral health.",
+                options: [ { text: "Book a preventive visit", next: 'booking_start' }, { text: "What about restorative?", next: 'services_restorative', context: "Restorative Dentistry" }, { text: "Main Menu", next: 'start' } ]
+            },
+            'services_restorative': {
+                text: "Absolutely. We can restore your smile's function and appearance with services like tooth-colored fillings, crowns, bridges, and dental implants.",
+                options: [ { text: "Book a restorative consult", next: 'booking_start' }, { text: "And cosmetic options?", next: 'services_cosmetic', context: "Cosmetic Dentistry" }, { text: "Main Menu", next: 'start' } ]
+            },
+            'services_cosmetic': {
+                text: "Ready for a smile makeover? We offer professional teeth whitening, porcelain veneers, and bonding to help you achieve the confident smile you deserve.",
+                options: [ { text: "Book a cosmetic consult", next: 'booking_start' }, { text: "What is preventive care?", next: 'services_preventive', context: "Preventive Care" }, { text: "Main Menu", next: 'start' } ]
+            },
+            'practice_info': {
+                text: "Great questions are always welcome here. What's on your mind?",
+                options: [ { text: "Location & Hours", next: 'hours_info' }, { text: "About Dr. Jordan Brown", next: 'about_dr_brown' }, { text: "Do you accept my insurance?", next: 'insurance_info'}, { text: "Go back", next: 'start' } ]
+            },
+             'hours_info': {
+                text: "We're conveniently located in Wesley Chapel, FL. Our hours are Monday-Thursday, 8:30 AM to 5:00 PM. We look forward to seeing you!",
+                options: [ { text: "Book an appointment now", next: 'booking_start' }, { text: "Ask another question", next: 'practice_info' }, { text: "Main menu", next: 'start' } ]
+            },
+            'about_dr_brown': {
+                text: "Dr. Jordan Brown is a passionate and highly-skilled dentist committed to providing personalized, compassionate care and creating a welcoming environment for every single patient.",
+                options: [ { text: "Learn about services", next: 'services_overview' }, { text: "I have anxiety about dentists...", next: 'anxiety_support'}, { text: "Main menu", next: 'start' } ]
+            },
+             'insurance_info': {
+                text: "We work with a wide variety of insurance providers to maximize your benefits. For specific questions about your coverage, the best step is to call our office at (123) 456-7890.",
+                options: [ { text: "Let's book an appointment", next: 'booking_start' }, { text: "Ask another question", next: 'practice_info' }, { text: "Main menu", next: 'start' } ]
+            },
+            'anxiety_support': {
+                text: [
+                    "It's completely normal to feel anxious about dental visits, and I want you to know you've come to the right place.",
+                    "Our entire team, led by the wonderfully compassionate Dr. Brown, is trained to focus on your comfort. We take our time, explain every step, and ensure you feel safe, heard, and in control."
+                ],
+                options: [ { text: "That's very reassuring.", next: 'anxiety_reassured' }, { text: "Tell me more about Dr. Brown", next: 'about_dr_brown' }, { text: "Back to the main menu", next: 'start' } ]
+            },
+            'anxiety_reassured': {
+                text: "I'm so glad to hear that. We truly want your experience to be a positive one. Is there anything else I can help you with today?",
+                options: [ { text: "Yes, please take me to the start.", next: 'start' }, { text: "No, that's all for now.", next: 'end_chat' } ]
+            },
+            'end_chat': {
+                text: "Thank you for chatting with us! We look forward to seeing you soon. Have a wonderful day.",
+                isEnd: true
+            }
+        };
+
+        // --- Core Functions ---
+
+        /**
+         * ROBUST SCROLL: Uses requestAnimationFrame for guaranteed, smooth scrolling.
+         */
+        function scrollToBottom() {
+            requestAnimationFrame(() => {
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+            });
+        }
+        
+        function clearOptions() {
+            userOptions.innerHTML = '';
+        }
+
+        function displayUserMessage(text) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message', 'user-message');
+            messageElement.textContent = text;
+            chatWindow.appendChild(messageElement);
+            scrollToBottom();
+        }
+
+        function showTypingIndicator() {
+            isBotTyping = true;
+            chatWindow.classList.add('thinking'); // Fade chat window
+            const indicator = document.createElement('div');
+            indicator.id = 'typing-indicator';
+            indicator.classList.add('typing-indicator');
+            indicator.innerHTML = '<span></span><span></span><span></span>';
+            chatWindow.appendChild(indicator);
+            scrollToBottom();
+        }
+
+        function hideTypingIndicator() {
+            isBotTyping = false;
+            chatWindow.classList.remove('thinking'); // Un-fade chat window
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) indicator.remove();
+        }
+
+        /**
+         * Creates the typing effect for an AI message with randomized speed.
+         * @param {HTMLElement} element - The message bubble element.
+         * @param {string} text - The text to type out.
+         * @param {function} onComplete - A callback function to run when typing is finished.
+         */
+        function typeMessage(element, text, onComplete) {
+            let i = 0;
+            element.textContent = "";
+            isBotTyping = true;
+            
+            function typeWriter() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    scrollToBottom(); // Scroll on each character
+                    // NEW: Randomized typing speed
+                    const typingSpeed = Math.random() * 40 + 30; // Between 30ms and 70ms
+                    setTimeout(typeWriter, typingSpeed);
+                } else {
+                    isBotTyping = false;
+                    if (onComplete) {
+                        onComplete();
+                    }
+                }
+            }
+            typeWriter();
+        }
+
+        /**
+         * Orchestrates the conversation flow with the new typing effect.
+         * @param {string} stepKey - The key for the conversation step.
+         */
+        function advanceConversation(stepKey) {
+            const currentStep = conversationTree[stepKey];
+            if (currentStep.action) currentStep.action();
+            
+            const textToDisplay = typeof currentStep.text === 'function' ? currentStep.text() : currentStep.text;
+            
+            const showOptionsCallback = () => {
+                if (!currentStep.isEnd) {
+                    displayOptions(currentStep.options);
+                } else {
+                    displayOptions([{ text: "Start Over", next: 'start' }]);
+                }
+            };
+            
+            if (Array.isArray(textToDisplay)) {
+                let messageIndex = 0;
+                function typeNextMessage() {
+                    if (messageIndex < textToDisplay.length) {
+                        const messageElement = document.createElement('div');
+                        messageElement.classList.add('chat-message', 'ai-message');
+                        chatWindow.appendChild(messageElement);
+                        scrollToBottom();
+                        
+                        typeMessage(messageElement, textToDisplay[messageIndex], () => {
+                            messageIndex++;
+                            setTimeout(typeNextMessage, 300);
+                        });
+                    } else {
+                        showOptionsCallback();
+                    }
+                }
+                typeNextMessage();
+            } else {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('chat-message', 'ai-message');
+                chatWindow.appendChild(messageElement);
+                scrollToBottom();
+                typeMessage(messageElement, textToDisplay, showOptionsCallback);
+            }
+        }
+        
+        function displayOptions(options) {
+            clearOptions();
+            options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.classList.add('option-button');
+                button.textContent = option.text;
+                button.style.animationDelay = `${index * 0.1}s`;
+                button.onclick = (e) => handleOptionClick(option, e.currentTarget);
+                userOptions.appendChild(button);
+            });
+        }
+        
+        function handleOptionClick(option, buttonElement) {
+            if (isBotTyping) return; // Prevent clicking while bot is typing
+
+            const { text: userText, next: nextStepKey, context } = option;
+            
+            displayUserMessage(userText);
+            buttonElement.classList.add('selected');
+            if (context) conversationContext.interestedService = context;
+
+            clearOptions();
+
+            setTimeout(() => {
+                showTypingIndicator();
+                
+                const thinkingTime = 1000; 
+
+                setTimeout(() => {
+                    hideTypingIndicator();
+                    advanceConversation(nextStepKey);
+                }, thinkingTime);
+                
+            }, 300);
+        }
+
+        function startChat() {
+            setTimeout(() => {
+                advanceConversation('start');
+            }, 500);
+        }
+
+        // --- Start the Chat ---
+        startChat();
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coke Florida - Smart Inventory Bot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- General Styling & App Container --- */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f3f6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #1a1a1a;
+        }
+
+        #chat-container {
+            width: 100%;
+            max-width: 400px;
+            height: 80vh;
+            max-height: 700px;
+            background-color: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #e6e6e6;
+        }
+
+        /* --- Chat Header (Coke Theme) --- */
+        #chat-header {
+            background: #e60012; /* Coca-Cola Red */
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 2px solid #c4000f;
+            flex-shrink: 0;
+        }
+
+        #chat-header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 12px;
+            background-color: #ffffff;
+            padding: 5px;
+        }
+
+        #chat-header h2 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        #chat-header p {
+             margin: 0;
+             font-size: 12px;
+             opacity: 0.9;
+        }
+
+        /* --- Message Window --- */
+        #chat-window {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            background-color: #f7f7f7;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        #chat-window.thinking {
+            opacity: 0.8;
+        }
+
+        .chat-message {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            margin-bottom: 10px;
+            line-height: 1.5;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* AI (Bot) Message Styling */
+        .ai-message {
+            background-color: #e6e6e6;
+            color: #1a1a1a;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        
+        /* Alert/Insight Styling */
+        .insight-message {
+            background-color: #fff2f2;
+            color: #9b000f;
+            border-left: 3px solid #e60012;
+            font-weight: 500;
+        }
+        
+        /* User Message Styling */
+        .user-message {
+            background-color: #2d3748;
+            color: #ffffff;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        
+        /* --- Typing Indicator --- */
+        .typing-indicator {
+            align-self: flex-start;
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background-color: #e6e6e6;
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            margin: 0 2px;
+            background-color: #7f7f7f;
+            border-radius: 50%;
+            display: inline-block;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
+
+        /* --- User Options / Input Area --- */
+        #user-options {
+            padding: 15px;
+            border-top: 1px solid #e6e6e6;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .option-button {
+            width: 100%;
+            background-color: #ffffff;
+            color: #1a1a1a;
+            border: 1px solid #cccccc;
+            padding: 12px 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+            transition: all 0.2s ease;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: slideInUp 0.5s forwards;
+        }
+
+        .option-button:hover {
+            background-color: #f7f7f7;
+            border-color: #1a1a1a;
+        }
+
+        .option-button.primary {
+            background-color: #e60012;
+            color: white;
+            border-color: #e60012;
+        }
+        .option-button.primary:hover {
+            background-color: #c4000f;
+        }
+        
+        @keyframes slideInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="chat-container">
+        <div id="chat-header">
+            <img src="https://placehold.co/100x100/ffffff/e60012?text=📈" alt="Coke Icon">
+            <div>
+                <h2>Smart Inventory</h2>
+                <p>Coke Florida Partner Portal</p>
+            </div>
+        </div>
+        
+        <div id="chat-window"></div>
+        
+        <div id="user-options"></div>
+    </div>
+
+    <script>
+        const chatWindow = document.getElementById('chat-window');
+        const userOptions = document.getElementById('user-options');
+        let isBotTyping = false;
+
+        const conversationTree = {
+            'start': {
+                text: "Good morning. Welcome to the Coke Florida Smart Inventory portal.",
+                options: [
+                    { text: "☀️ View Daily Briefing", next: 'briefing_start', isPrimary: true },
+                    { text: "📊 Check Inventory Levels", next: 'inventory_check' },
+                    { text: "📈 View Sales Forecast", next: 'forecast_check' },
+                    { text: "🚚 Track My Next Delivery", next: 'delivery_check' }
+                ]
+            },
+            // --- NEW: Proactive Daily Briefing ---
+            'briefing_start': {
+                text: "Here is your AI-powered briefing for Thursday, June 19th:",
+                action: (callback) => { setTimeout(() => { advanceConversation('briefing_details'); }, 1500); }
+            },
+            'briefing_details': {
+                text: [
+                    "OVERNIGHT SALES: Sales velocity was 12% higher than average.",
+                    "LOW STOCK ALERT: Coke Zero inventory is at 15%. Stock-out risk is HIGH.",
+                    "AI FORECAST: We predict a 25% increase in demand for sports drinks and bottled water this weekend due to a local marathon and high heat warning."
+                ],
+                isInsight: true,
+                options: [
+                    { text: "Recommend an order for Coke Zero", next: 'order_recommend_coke' },
+                    { text: "Recommend an order for the forecast", next: 'order_recommend_sports' },
+                    { text: "Go to Main Menu", next: 'start' }
+                ]
+            },
+
+            // --- Inventory Flow (with Drill-Down) ---
+            'inventory_check': {
+                text: "Happy to help. Which product line do you want to analyze?",
+                options: [
+                    { text: "Coca-Cola Products", next: 'inventory_drilldown_coke' },
+                    { text: "Dasani & smartwater", next: 'inventory_result_water' },
+                    { text: "Go back", next: 'start' }
+                ]
+            },
+            'inventory_drilldown_coke': {
+                text: "Okay, which specific product would you like to see a scorecard for?",
+                options: [
+                    { text: "Coke Zero", next: 'scorecard_coke_zero' },
+                    { text: "Classic Coke", next: 'scorecard_classic' },
+                    { text: "All Coke Products", next: 'inventory_result_coke' }
+                ]
+            },
+            'scorecard_coke_zero': {
+                text: [
+                    "PRODUCT SCORECARD: Coke Zero",
+                    "Inventory Level: 15% 🟥⬜️⬜️⬜️⬜️ (LOW)",
+                    "Sales Velocity: 🟩🟩🟩🟩⬜️ (Up 30% vs last week)",
+                    "Stock-Out Risk: HIGH"
+                ],
+                isInsight: true,
+                options: [ { text: "Generate a smart order", next: 'order_recommend_coke' }, { text: "Check another product", next: 'inventory_check' } ]
+            },
+            'scorecard_classic': {
+                text: [
+                    "PRODUCT SCORECARD: Classic Coke",
+                    "Inventory Level: 45% 🟩�⬜️⬜️⬜️ (Healthy)",
+                    "Sales Velocity: 🟩🟩🟩⬜️⬜️ (Steady)",
+                    "Stock-Out Risk: LOW"
+                ],
+                options: [ { text: "Check another product", next: 'inventory_check' }, { text: "Main Menu", next: 'start' } ]
+            },
+             'inventory_result_water': {
+                text: "Accessing real-time stock levels... Your Dasani stock is at 80% (Healthy). smartwater is at 75% (Healthy). No action needed at this time.",
+                options: [ { text: "Check another product", next: 'inventory_check' }, { text: "Main Menu", next: 'start' } ]
+            },
+
+            // --- Sales Forecast Flow (with timeframes) ---
+            'forecast_check': {
+                text: "I can provide a data-driven forecast. What time frame are you interested in?",
+                options: [
+                    { text: "This Weekend", next: 'forecast_weekend' },
+                    { text: "Next 7 Days", next: 'forecast_week' },
+                    { text: "Go back", next: 'start' }
+                ]
+            },
+            'forecast_weekend': {
+                text: "AI FORECAST (Weekend): Analyzing local events... We predict a 25% increase in demand for Powerade and Dasani due to a local marathon and high heat.",
+                isInsight: true,
+                options: [ { text: "Recommend a smart order", next: 'order_recommend_sports' }, { text: "Check another forecast", next: 'forecast_check' } ]
+            },
+            'forecast_week': {
+                text: "AI FORECAST (7-Day): Sales trends show a consistent rise in Diet Coke demand. Consider increasing shelf space or running a promotion.",
+                isInsight: true,
+                options: [ { text: "Recommend a smart order", next: 'order_recommend_coke' }, { text: "Check another forecast", next: 'forecast_check' } ]
+            },
+
+            // --- Smart Order Flow (with adjustments) ---
+            'order_recommend_coke': {
+                text: "AI RECOMMENDATION: Based on velocity and current stock, I recommend adding 8 cases of Coke Zero and 4 cases of Diet Coke to prevent a stockout.",
+                isInsight: true,
+                options: [
+                    { text: "✓ Add to cart & Confirm", next: 'order_confirm', isPrimary: true },
+                    { text: "✎ Adjust Quantities", next: 'order_adjust' },
+                    { text: "No thanks", next: 'start' }
+                ]
+            },
+            'order_recommend_sports': {
+                 text: "AI RECOMMENDATION: Based on the forecast, I recommend adding 10 cases of assorted Powerade and 12 cases of Dasani to meet expected demand.",
+                 isInsight: true,
+                 options: [
+                    { text: "✓ Add to cart & Confirm", next: 'order_confirm', isPrimary: true },
+                    { text: "✎ Adjust Quantities", next: 'order_adjust' },
+                ]
+            },
+            'order_adjust': {
+                text: "Order adjustment requires manager access. For this demo, we'll proceed with the recommended quantities. Shall we confirm?",
+                options: [ { text: "Yes, confirm the order", next: 'order_confirm' }, { text: "No, cancel for now", next: 'start' } ]
+            },
+            'order_confirm': {
+                text: "Excellent. Your AI-optimized order has been placed. You will receive a confirmation email shortly.",
+                options: [ { text: "Track my delivery", next: 'delivery_check' }, { text: "Back to Main Menu", next: 'start' } ]
+            },
+
+            // --- Delivery Tracking Flow (with simulated map) ---
+            'delivery_check': {
+                text: "Accessing our logistics network for your next delivery...",
+                action: () => { setTimeout(() => { advanceConversation('delivery_result'); }, 1500); }
+            },
+            'delivery_result': {
+                text: "Your next delivery is scheduled for tomorrow, June 20th, between 9-11 AM. Driver is on schedule and 7 stops away. (Live map not available in demo).",
+                options: [ { text: "Can you notify me on arrival?", next: 'delivery_notify' }, { text: "Great, thanks!", next: 'anything_else' } ]
+            },
+            'delivery_notify': {
+                text: "Of course. I have enabled real-time push notifications for this delivery. You'll be alerted when the truck is 30 minutes away.",
+                options: [ { text: "Perfect.", next: 'anything_else' } ]
+            },
+            
+            // --- Universal Nodes ---
+            'anything_else': {
+                text: "What else can I assist you with?",
+                options: [ { text: "☀️ Daily Briefing", next: 'briefing_start' }, { text: "📊 Check Inventory", next: 'inventory_check' }, { text: "📈 View Forecast", next: 'forecast_check' }, { text: "🤖 Place an Order", next: 'order_recommend_coke', isPrimary: true } ]
+            },
+            'end_chat': {
+                text: "You're welcome. Thank you for partnering with Coke Florida.",
+                isEnd: true
+            }
+        };
+
+        function scrollToBottom() {
+            requestAnimationFrame(() => { chatWindow.scrollTop = chatWindow.scrollHeight; });
+        }
+        
+        function clearUserInputArea() {
+            userOptions.innerHTML = '';
+        }
+
+        function displayUserMessage(text) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message', 'user-message');
+            messageElement.textContent = text;
+            chatWindow.appendChild(messageElement);
+            scrollToBottom();
+        }
+
+        function showTypingIndicator() {
+            isBotTyping = true;
+            chatWindow.classList.add('thinking');
+            const indicator = document.createElement('div');
+            indicator.id = 'typing-indicator';
+            indicator.classList.add('typing-indicator');
+            indicator.innerHTML = '<span></span><span></span><span></span>';
+            chatWindow.appendChild(indicator);
+            scrollToBottom();
+        }
+
+        function hideTypingIndicator() {
+            isBotTyping = false;
+            chatWindow.classList.remove('thinking');
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) indicator.remove();
+        }
+
+        function typeMessage(element, text, onComplete) {
+            let i = 0;
+            element.textContent = "";
+            isBotTyping = true;
+            
+            function typeWriter() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    scrollToBottom();
+                    const typingSpeed = Math.random() * 20 + 10;
+                    setTimeout(typeWriter, typingSpeed);
+                } else {
+                    isBotTyping = false;
+                    if (onComplete) onComplete();
+                }
+            }
+            typeWriter();
+        }
+
+        function advanceConversation(stepKey) {
+            const currentStep = conversationTree[stepKey];
+            
+            const showOptionsCallback = () => {
+                if (currentStep.isEnd) {
+                    renderUserInputArea({ options: [{text: "Main Menu", next: 'start'}] });
+                } else if(currentStep.options) {
+                    renderUserInputArea(currentStep);
+                }
+            };
+            
+            if (currentStep.action) {
+                showTypingIndicator();
+                setTimeout(() => {
+                    hideTypingIndicator();
+                    currentStep.action();
+                }, 1000);
+                return;
+            }
+            
+            const textToDisplay = Array.isArray(currentStep.text) ? currentStep.text : [currentStep.text];
+            let messageIndex = 0;
+
+            function typeNextMessage() {
+                if (messageIndex < textToDisplay.length) {
+                    const messageElement = document.createElement('div');
+                    messageElement.classList.add('chat-message', 'ai-message');
+                    if (currentStep.isInsight) { messageElement.classList.add('insight-message'); }
+                    chatWindow.appendChild(messageElement);
+                    scrollToBottom();
+
+                    typeMessage(messageElement, textToDisplay[messageIndex], () => {
+                        messageIndex++;
+                        // No delay for multi-line messages that are part of the same thought
+                        if (messageIndex < textToDisplay.length) {
+                           typeNextMessage();
+                        } else {
+                           setTimeout(showOptionsCallback, 400); // Small pause before showing options
+                        }
+                    });
+                }
+            }
+            typeNextMessage();
+        }
+        
+        function renderUserInputArea(step) {
+            clearUserInputArea();
+
+            if (step.options) {
+                step.options.forEach((option, index) => {
+                    const button = document.createElement('button');
+                    button.classList.add('option-button');
+                    if (option.isPrimary) { button.classList.add('primary'); }
+                    button.textContent = option.text;
+                    button.style.animationDelay = `${index * 0.1}s`;
+                    button.onclick = () => handleOptionClick(option);
+                    userOptions.appendChild(button);
+                });
+            }
+        }
+        
+        function handleOptionClick(option) {
+            if (isBotTyping) return;
+            const { text: userText, next: nextStepKey } = option;
+            
+            displayUserMessage(userText);
+            clearUserInputArea();
+
+            setTimeout(() => {
+                showTypingIndicator();
+                const thinkingTime = 600; 
+                setTimeout(() => {
+                    hideTypingIndicator();
+                    advanceConversation(nextStepKey);
+                }, thinkingTime);
+            }, 300);
+        }
+
+        function startChat() {
+            setTimeout(() => {
+                advanceConversation('start');
+            }, 500);
+        }
+
+        startChat();
+
+    </script>
+</body>
+</html>

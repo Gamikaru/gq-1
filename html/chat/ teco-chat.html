@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TECO - Energy Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- General Styling & App Container --- */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #1e293b;
+        }
+
+        #chat-container {
+            width: 100%;
+            max-width: 400px;
+            height: 80vh;
+            max-height: 700px;
+            background-color: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #d1d5db;
+        }
+
+        /* --- Chat Header (TECO Theme) --- */
+        #chat-header {
+            background: linear-gradient(135deg, #005691, #003d66); /* TECO Blue Gradient */
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #002d4c;
+            flex-shrink: 0;
+        }
+
+        #chat-header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 12px;
+            background-color: #ffc425; /* TECO Yellow */
+            padding: 6px;
+        }
+
+        #chat-header h2 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        #chat-header p {
+             margin: 0;
+             font-size: 12px;
+             opacity: 0.9;
+        }
+
+        /* --- Message Window --- */
+        #chat-window {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        #chat-window.thinking {
+            opacity: 0.8;
+        }
+
+        .chat-message {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            margin-bottom: 10px;
+            line-height: 1.5;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* AI (Bot) Message Styling */
+        .ai-message {
+            background-color: #f1f5f9;
+            color: #1e293b;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        
+        /* User Message Styling */
+        .user-message {
+            background-color: #0078d4; /* A slightly brighter TECO blue for user messages */
+            color: #ffffff;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        /* Outage alert message styling */
+        .outage-message {
+            background-color: #fffbeb;
+            color: #b45309;
+            border: 1px solid #fcd34d;
+            font-weight: 500;
+        }
+        
+        /* --- Typing Indicator --- */
+        .typing-indicator {
+            align-self: flex-start;
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background-color: #f1f5f9;
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            margin: 0 2px;
+            background-color: #94a3b8;
+            border-radius: 50%;
+            display: inline-block;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
+
+        /* --- User Options / Input Area --- */
+        #user-options {
+            padding: 15px;
+            border-top: 1px solid #e2e8f0;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .option-button {
+            width: 100%;
+            background-color: #ffffff;
+            color: #0078d4;
+            border: 1px solid #d1d5db;
+            padding: 12px 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+            transition: all 0.2s ease;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: slideInUp 0.5s forwards;
+        }
+
+        .option-button:hover {
+            background-color: #eff6ff;
+            border-color: #0078d4;
+        }
+        
+        @keyframes slideInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="chat-container">
+        <div id="chat-header">
+            <img src="https://placehold.co/100x100/005691/ffc425?text=💡" alt="TECO Lightbulb">
+            <div>
+                <h2>Energy Assistant</h2>
+                <p>Tampa Electric</p>
+            </div>
+        </div>
+        
+        <div id="chat-window"></div>
+        
+        <div id="user-options"></div>
+    </div>
+
+    <script>
+        const chatWindow = document.getElementById('chat-window');
+        const userOptions = document.getElementById('user-options');
+        let isBotTyping = false;
+
+        const conversationTree = {
+            'start': {
+                text: "Hello! I'm your TECO Energy Assistant. How can I help you today?",
+                options: [
+                    { text: "📊 View My Energy Usage", next: 'usage_start' },
+                    { text: "💸 Get Energy-Saving Tips", next: 'tips_start' },
+                    { text: "🔌 Manage Smart Devices", next: 'devices_start' },
+                    { text: "⚠️ Report a Power Outage", next: 'outage_start' }
+                ]
+            },
+            
+            // --- Outage Flow ---
+            'outage_start': {
+                text: "I can help with that. First, are you reporting a downed power line or another life-threatening situation?",
+                options: [
+                    { text: "Yes, it's a dangerous situation.", next: 'outage_emergency' },
+                    { text: "No, my power is just out.", next: 'outage_report' }
+                ]
+            },
+            'outage_emergency': {
+                text: "Please stay far away from the area and call 9-1-1 immediately. Then, call our emergency line at (813) 223-0800.",
+                isEnd: true,
+                isOutage: true
+            },
+            'outage_report': {
+                text: "Okay. The fastest way to report an outage is on our website at TampaElectric.com/Outage or by calling (877) 588-1010. Crews are automatically dispatched to known outage areas.",
+                options: [ { text: "Show me other options", next: 'anything_else' }, { text: "No, that's all.", next: 'end_chat' } ]
+            },
+
+            // --- Usage Flow ---
+            'usage_start': {
+                text: "Checking your latest energy insights... It looks like your usage is trending 15% higher this week compared to last week.",
+                options: [
+                    { text: "Why would it be higher?", next: 'usage_reasons' },
+                    { text: "Show me detailed stats", next: 'usage_details' },
+                    { text: "Go back", next: 'start' }
+                ]
+            },
+            'usage_reasons': {
+                text: "Higher usage is often due to A/C settings, increased use of large appliances, or new electronics. Would you like some personalized tips to lower your bill?",
+                options: [
+                    { text: "Yes, give me some tips!", next: 'tips_start' },
+                    { text: "No, just show me stats.", next: 'usage_details' },
+                    { text: "Go back", next: 'anything_else' }
+                ]
+            },
+            'usage_details': {
+                text: "For a full breakdown of your hourly and daily usage, please log in to your secure account on TampaElectric.com.",
+                options: [ { text: "Give me savings tips instead", next: 'tips_start' }, { text: "Okay, thanks!", next: 'anything_else' } ]
+            },
+            
+            // --- Saving Tips Flow ---
+            'tips_start': {
+                text: "We love helping you save! What area are you most interested in for saving money and energy?",
+                options: [
+                    { text: "Air Conditioning (A/C)", next: 'tips_ac' },
+                    { text: "Appliances & Electronics", next: 'tips_appliances' },
+                    { text: "Lighting", next: 'tips_lighting' }
+                ]
+            },
+            'tips_ac': {
+                text: "Your A/C is a big energy user! Try setting your thermostat to 78°F or higher. Every degree higher can save up to 5% on cooling costs.",
+                options: [ { text: "Tell me about appliances", next: 'tips_appliances' }, { text: "Go back to tips", next: 'tips_start' }, { text: "Thanks!", next: 'anything_else' } ]
+            },
+            'tips_appliances': {
+                text: "Unplug electronics when not in use to avoid 'phantom load'. Also, try running your dishwasher and laundry machines with full loads during off-peak hours (after 8 PM).",
+                options: [ { text: "Tell me about lighting", next: 'tips_lighting' }, { text: "Go back to tips", next: 'tips_start' }, { text: "Thanks!", next: 'anything_else' } ]
+            },
+            'tips_lighting': {
+                text: "Switching to LED bulbs is one of the easiest ways to save. They use up to 90% less energy and last up to 25 times longer than traditional bulbs.",
+                options: [ { text: "Tell me about A/C", next: 'tips_ac' }, { text: "Go back to tips", next: 'tips_start' }, { text: "Thanks!", next: 'anything_else' } ]
+            },
+
+            // --- Smart Devices Flow ---
+            'devices_start': {
+                text: "Smart devices are a great way to manage your energy. Which device can I help you with?",
+                options: [
+                    { text: "⚡ Electric Vehicle (EV) Charger", next: 'devices_ev' },
+                    { text: "🌡️ Smart Thermostat", next: 'devices_thermostat' },
+                    { text: "Go back", next: 'start' }
+                ]
+            },
+            'devices_ev': {
+                text: "With our smart charging programs, you can schedule your EV to charge during off-peak hours to save money. You can set this up in your online account.",
+                options: [ { text: "Help with my thermostat", next: 'devices_thermostat' }, { text: "Okay, thanks!", next: 'anything_else' } ]
+            },
+            'devices_thermostat': {
+                text: "You can connect your smart thermostat to our energy-saver programs to earn bill credits for helping us reduce demand during peak times. Check our website for eligible devices!",
+                options: [ { text: "Help with my EV charger", next: 'devices_ev' }, { text: "Okay, thanks!", next: 'anything_else' } ]
+            },
+
+            // --- Universal "Anything else?" and "End Chat" nodes ---
+            'anything_else': {
+                text: "Is there anything else I can assist you with today?",
+                options: [
+                    { text: "📊 View My Energy Usage", next: 'usage_start' },
+                    { text: "💸 Get Energy-Saving Tips", next: 'tips_start' },
+                    { text: "🔌 Manage Smart Devices", next: 'devices_start' },
+                    { text: "⚠️ Report a Power Outage", next: 'outage_start' }
+                ]
+            },
+            'end_chat': {
+                text: "You're welcome! Thanks for being a TECO customer. Have a great day.",
+                isEnd: true
+            }
+        };
+
+        function scrollToBottom() {
+            requestAnimationFrame(() => { chatWindow.scrollTop = chatWindow.scrollHeight; });
+        }
+        
+        function clearOptions() {
+            userOptions.innerHTML = '';
+        }
+
+        function displayUserMessage(text) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message', 'user-message');
+            messageElement.textContent = text;
+            chatWindow.appendChild(messageElement);
+            scrollToBottom();
+        }
+
+        function showTypingIndicator() {
+            isBotTyping = true;
+            chatWindow.classList.add('thinking');
+            const indicator = document.createElement('div');
+            indicator.id = 'typing-indicator';
+            indicator.classList.add('typing-indicator');
+            indicator.innerHTML = '<span></span><span></span><span></span>';
+            chatWindow.appendChild(indicator);
+            scrollToBottom();
+        }
+
+        function hideTypingIndicator() {
+            isBotTyping = false;
+            chatWindow.classList.remove('thinking');
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) indicator.remove();
+        }
+
+        function typeMessage(element, text, onComplete) {
+            let i = 0;
+            element.textContent = "";
+            isBotTyping = true;
+            
+            function typeWriter() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    scrollToBottom();
+                    const typingSpeed = Math.random() * 25 + 15; // Fast typing speed
+                    setTimeout(typeWriter, typingSpeed);
+                } else {
+                    isBotTyping = false;
+                    if (onComplete) onComplete();
+                }
+            }
+            typeWriter();
+        }
+
+        function advanceConversation(stepKey) {
+            const currentStep = conversationTree[stepKey];
+            const textToDisplay = typeof currentStep.text === 'function' ? currentStep.text() : currentStep.text;
+            
+            const showOptionsCallback = () => {
+                if (currentStep.isEnd) {
+                    clearOptions();
+                    return;
+                }
+                displayOptions(currentStep.options);
+            };
+            
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message', 'ai-message');
+            if(currentStep.isOutage) { // Special styling for outage/emergency messages
+                 messageElement.classList.add('outage-message');
+            }
+
+            if (Array.isArray(textToDisplay)) {
+                let messageIndex = 0;
+                function typeNextMessage() {
+                    if (messageIndex < textToDisplay.length) {
+                        const msgEl = document.createElement('div');
+                        msgEl.classList.add('chat-message', 'ai-message');
+                        chatWindow.appendChild(msgEl);
+                        scrollToBottom();
+                        
+                        typeMessage(msgEl, textToDisplay[messageIndex], () => {
+                            messageIndex++;
+                            setTimeout(typeNextMessage, 300);
+                        });
+                    } else {
+                        showOptionsCallback();
+                    }
+                }
+                typeNextMessage();
+            } else {
+                chatWindow.appendChild(messageElement);
+                scrollToBottom();
+                typeMessage(messageElement, textToDisplay, showOptionsCallback);
+            }
+        }
+        
+        function displayOptions(options) {
+            clearOptions();
+            options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.classList.add('option-button');
+                button.textContent = option.text;
+                button.style.animationDelay = `${index * 0.1}s`;
+                button.onclick = (e) => handleOptionClick(option);
+                userOptions.appendChild(button);
+            });
+        }
+        
+        function handleOptionClick(option) {
+            if (isBotTyping) return;
+
+            const { text: userText, next: nextStepKey } = option;
+            
+            displayUserMessage(userText);
+            clearOptions();
+
+            setTimeout(() => {
+                showTypingIndicator();
+                const thinkingTime = 600; 
+                setTimeout(() => {
+                    hideTypingIndicator();
+                    advanceConversation(nextStepKey);
+                }, thinkingTime);
+            }, 300);
+        }
+
+        function startChat() {
+            setTimeout(() => {
+                advanceConversation('start');
+            }, 500);
+        }
+
+        startChat();
+
+    </script>
+</body>
+</html>
